@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "itemrestrictions",
+  "version": "${version}",
+  "name": "Item Restrictions",
+  "description": "",
+  "authors": [
+    "DAQEM"
+  ],
+  "contact": {
+    "homepage": "https://daqem.com/",
+    "sources": "https://github.com/DAQEM/ItemRestrictions"
+  },
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.daqem.itemrestrictions.fabric.ItemRestrictionsFabric"
+    ],
+    "client": [
+      "com.daqem.itemrestrictions.fabric.client.ItemRestrictionsFabricClient"
+    ]
+  },
+  "mixins": [
+    "itemrestrictions.mixins.json",
+    "itemrestrictions-common.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.19.2",
+    "architectury": ">=6.2.43"
+  }
+}

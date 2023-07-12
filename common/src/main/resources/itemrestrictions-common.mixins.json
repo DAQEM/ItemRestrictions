@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.daqem.itemrestrictions.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "client.MixinAbstractContainerScreen"
+  ],
+  "mixins": [
+    "MixinServerPlayer",
+    "block.MixinAbstractFurnaceBlockEntity",
+    "block.MixinBrewingStandBlockEntity",
+    "item.MixinItemStack",
+    "menu.MixinAnvilMenu",
+    "menu.MixinCraftingMenu",
+    "menu.MixinEnchantmentMenu",
+    "menu.MixinGrindStoneMenu",
+    "menu.MixingSmithingMenu",
+    "menu.MixinItemCombinerMenu"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

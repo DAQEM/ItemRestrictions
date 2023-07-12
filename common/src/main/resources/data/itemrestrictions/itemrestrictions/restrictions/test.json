@@ -1,0 +1,32 @@
+{
+  "types": [
+    "craft",
+    "smelt",
+    "brew",
+    "enchant",
+    "repair",
+    "use_item",
+    "break_block",
+    "item_break_block",
+    "place_block",
+    "hurt_entity"
+  ],
+  "conditions": [
+    {
+      "type": "arc:items",
+      "inverted": true,
+      "items": [
+        "minecraft:stone",
+        "minecraft:stone_bricks",
+        "minecraft:egg",
+        "minecraft:diamond_sword"
+      ]
+    },
+    {
+      "type": "arc:item",
+      "inverted": true,
+      "item": "minecraft:potion",
+      "tag": "{Potion:\"minecraft:swiftness\"}"
+    }
+  ]
+}
