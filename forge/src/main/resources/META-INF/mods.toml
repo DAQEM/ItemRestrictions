@@ -5,7 +5,7 @@ license = "MIT"
 
 [[mods]]
 modId = "itemrestrictions"
-version = "${mod_version}"
+version = "${version}"
 displayName = "Item Restrictions"
 authors = "DAQEM"
 logoFile = "icon.png"
