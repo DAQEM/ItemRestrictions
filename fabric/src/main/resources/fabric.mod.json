@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "itemrestrictions",
-  "version": "${version}",
+  "version": "${mod_version}",
   "name": "Item Restrictions",
   "description": "",
   "authors": [
@@ -29,6 +29,7 @@
   "depends": {
     "fabric": "*",
     "minecraft": ">=1.19.2",
-    "architectury": ">=6.2.43"
+    "architectury": ">=6.2.43",
+    "arc": ">=0.7"
   }
 }

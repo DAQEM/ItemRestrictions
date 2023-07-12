@@ -5,7 +5,7 @@ license = "MIT"
 
 [[mods]]
 modId = "itemrestrictions"
-version = "${version}"
+version = "${mod_version}"
 displayName = "Item Restrictions"
 authors = "DAQEM"
 logoFile = "icon.png"
@@ -32,5 +32,12 @@ side = "BOTH"
 modId = "architectury"
 mandatory = true
 versionRange = "[6.2.43,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.itemrestrictions]]
+modId = "arc"
+mandatory = true
+versionRange = "[0.7,)"
 ordering = "AFTER"
 side = "BOTH"
