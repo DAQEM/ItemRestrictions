@@ -6,6 +6,8 @@ import com.daqem.arc.api.condition.ICondition;
 import com.daqem.arc.registry.ArcRegistry;
 import com.daqem.itemrestrictions.ItemRestrictions;
 import com.google.gson.*;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
@@ -21,10 +23,13 @@ public class ItemRestriction {
 
     private ResourceLocation location;
 
+    private final ItemStack icon;
+
     private final List<RestrictionType> restrictionTypes;
     private final List<ICondition> conditions;
 
-    public ItemRestriction(List<RestrictionType> restrictionTypes, List<ICondition> conditions) {
+    public ItemRestriction(ItemStack icon, List<RestrictionType> restrictionTypes, List<ICondition> conditions) {
+        this.icon = icon;
         this.restrictionTypes = restrictionTypes;
         this.conditions = conditions;
     }
@@ -58,6 +63,24 @@ public class ItemRestriction {
             List<RestrictionType> restrictionTypes = new ArrayList<>();
             List<ICondition> conditions = new ArrayList<>();
 
+            JsonObject iconObject = GsonHelper.getAsJsonObject(jsonObject, "icon");
+            Item item = GsonHelper.getAsItem(iconObject, "item");
+            int count = GsonHelper.getAsInt(iconObject, "count", 1);
+            ItemStack iconStack = new ItemStack(item);
+
+            iconStack.setCount(count);
+
+            if (iconObject.has("tag")) {
+                String tagName = GsonHelper.getAsString(iconObject, "tag");
+
+                try {
+                    iconStack.setTag(TagParser.parseTag(tagName));
+                } catch (CommandSyntaxException e) {
+                    String errorMessage = String.format("Error parsing tag for PowerupInstance icon %s: %s", tagName, e.getMessage());
+                    ItemRestrictions.LOGGER.error(errorMessage);
+                }
+            }
+
             restrictionTypesArray.forEach(jsonElement -> {
                 String restrictionTypeString = jsonElement.getAsString();
                 try {
@@ -75,7 +98,23 @@ public class ItemRestriction {
                 });
             });
 
-            return new ItemRestriction(restrictionTypes, conditions);
+            return new ItemRestriction(iconStack, restrictionTypes, conditions);
         }
+    }
+
+    public ResourceLocation getLocation() {
+        return location;
+    }
+
+    public ItemStack getIcon() {
+        return icon;
+    }
+
+    public List<ICondition> getConditions() {
+        return conditions;
+    }
+
+    public List<RestrictionType> getRestrictionTypes() {
+        return restrictionTypes;
     }
 }

@@ -1,4 +1,9 @@
 {
+  "icon": {
+    "item": "minecraft:stone",
+    "tag": "{Potion:\"minecraft:swiftness\"}",
+    "count": 3
+  },
   "types": [
     "craft",
     "smelt",
