@@ -31,13 +31,13 @@ side = "BOTH"
 [[dependencies.itemrestrictions]]
 modId = "architectury"
 mandatory = true
-versionRange = "[6.2.43,)"
+versionRange = "[6.5.85,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.itemrestrictions]]
 modId = "arc"
 mandatory = true
-versionRange = "[0.7,)"
+versionRange = "[0.8,)"
 ordering = "AFTER"
 side = "BOTH"

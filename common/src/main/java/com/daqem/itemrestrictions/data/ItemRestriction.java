@@ -35,17 +35,22 @@ public class ItemRestriction {
     }
 
     public RestrictionResult isRestricted(ActionData actionData) {
-        RestrictionResult result = new RestrictionResult();
         ItemStack itemStack = actionData.getData(ActionDataType.ITEM_STACK);
-        if (itemStack != null) {
-            for (ICondition condition : conditions) {
-                boolean met = condition.isMet(actionData);
-                if ((!condition.isInverted() && !met) || (condition.isInverted() && met)) {
-                    result = new RestrictionResult(restrictionTypes);
-                }
+
+        if (itemStack == null) {
+            return new RestrictionResult();
+        }
+
+        for (ICondition condition : this.conditions) {
+            boolean met = condition.isMet(actionData);
+
+            // If a condition is not met, return a default RestrictionResult
+            if (!met && !condition.isInverted() || met && condition.isInverted()) {
+                return new RestrictionResult();
             }
         }
-        return result;
+
+        return new RestrictionResult(this.restrictionTypes);
     }
 
     public void setLocation(ResourceLocation location) {
