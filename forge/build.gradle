@@ -16,8 +16,8 @@ loom {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
-        mixinConfig "jobsplus-common.mixins.json"
-        mixinConfig "jobsplus.mixins.json"
+        mixinConfig "itemrestrictions-common.mixins.json"
+        mixinConfig "itemrestrictions.mixins.json"
     }
 }
 
