@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2]
+
+### Fixed
+- Forge mixin config in build.gradle.
+
+[0.2.2]: https://github.com/DAQEM/ItemRestrictions/compare/06dd02da177e0158ad6826ca935bd07b62bea313...e4d62ad65519a2c5a0ba70c83d6bdf7998f25180
+
 ## [0.2.1]
 
 ### Fixed
