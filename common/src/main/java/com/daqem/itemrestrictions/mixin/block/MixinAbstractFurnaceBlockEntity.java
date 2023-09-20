@@ -87,11 +87,13 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
 
     @Inject(at = @At("TAIL"), method = "saveAdditional(Lnet/minecraft/nbt/CompoundTag;)V")
     private void saveAdditional(CompoundTag compoundTag, CallbackInfo ci) {
-        if (itemrestrictions$getPlayer() != null) {
-            compoundTag.putString("ItemRestrictionsServerPlayer", itemrestrictions$getPlayer().getUUID().toString());
+        ServerPlayer serverPlayer = itemrestrictions$getPlayer();
+        if (serverPlayer != null) {
+            compoundTag.putString("ItemRestrictionsServerPlayer", serverPlayer.getUUID().toString());
         } else {
-            if (itemrestrictions$getPlayerUUID() != null) {
-                compoundTag.putString("ItemRestrictionsServerPlayer", itemrestrictions$getPlayerUUID().toString());
+            UUID uuid = itemrestrictions$getPlayerUUID();
+            if (uuid != null) {
+                compoundTag.putString("ItemRestrictionsServerPlayer", uuid.toString());
             }
         }
     }
@@ -206,6 +208,7 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
         return itemrestrictions$quickCheck;
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Override
     public AbstractFurnaceBlockEntity itemrestrictions$getAbstractFurnaceBlockEntity() {
         return (AbstractFurnaceBlockEntity) (Object) this;

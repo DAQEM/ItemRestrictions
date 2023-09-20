@@ -107,18 +107,22 @@ public class ItemRestriction {
         }
     }
 
+    @SuppressWarnings("unused")
     public ResourceLocation getLocation() {
         return location;
     }
 
+    @SuppressWarnings("unused")
     public ItemStack getIcon() {
         return icon;
     }
 
+    @SuppressWarnings("unused")
     public List<ICondition> getConditions() {
         return conditions;
     }
 
+    @SuppressWarnings("unused")
     public List<RestrictionType> getRestrictionTypes() {
         return restrictionTypes;
     }

@@ -11,6 +11,6 @@ public interface ItemRestrictionsNetworking {
 
     MessageType CLIENTBOUND_RESTRICTION = NETWORK.registerS2C("clientbound_restriction", ClientboundRestrictionPacket::new);
 
-    static void init() {
+    public static void init() {
     }
 }

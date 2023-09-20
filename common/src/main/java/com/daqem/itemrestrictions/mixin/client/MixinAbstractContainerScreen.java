@@ -1,7 +1,6 @@
 package com.daqem.itemrestrictions.mixin.client;
 
 import com.daqem.itemrestrictions.client.screen.ItemRestrictionsScreen;
-import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;

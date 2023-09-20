@@ -1,6 +1,5 @@
 package com.daqem.itemrestrictions.mixin.menu;
 
-import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,6 +25,7 @@ public abstract class MixinItemCombinerMenu extends AbstractContainerMenu {
         super(menuType, i);
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Unique
     private ItemCombinerMenu itemrestrictions$getMenu() {
         return (ItemCombinerMenu) (Object) this;

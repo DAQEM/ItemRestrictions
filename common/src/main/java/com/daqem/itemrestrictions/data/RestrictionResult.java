@@ -35,10 +35,12 @@ public class RestrictionResult {
         return this.restrictedBy.contains(restrictionType);
     }
 
+    @SuppressWarnings("unused")
     public List<RestrictionType> getRestrictedBy() {
         return restrictedBy;
     }
 
+    @SuppressWarnings("unused")
     public MutableComponent getMessage() {
         return ItemRestrictions.translatable("inventory.restricted", this.restrictedBy.size());
     }

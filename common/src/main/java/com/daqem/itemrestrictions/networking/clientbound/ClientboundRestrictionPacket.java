@@ -2,7 +2,6 @@ package com.daqem.itemrestrictions.networking.clientbound;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
 import com.daqem.itemrestrictions.client.screen.ItemRestrictionsScreen;
-import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.networking.ItemRestrictionsNetworking;
 import dev.architectury.networking.NetworkManager;

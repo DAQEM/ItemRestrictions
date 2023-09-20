@@ -1,7 +1,6 @@
 package com.daqem.itemrestrictions.client.screen;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
-import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;

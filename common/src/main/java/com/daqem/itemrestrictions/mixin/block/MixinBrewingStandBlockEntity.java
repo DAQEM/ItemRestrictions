@@ -33,7 +33,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.UUID;
 
 @Mixin(BrewingStandBlockEntity.class)
@@ -45,10 +44,10 @@ public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEnt
     private NonNullList<ItemStack> items;
     @Shadow
     private boolean[] lastPotionCount;
+
     @Unique
     @Nullable
     private UUID itemrestrictions$playerUUID;
-
     @Unique
     @Nullable
     private ServerPlayer itemrestrictions$player;
@@ -70,11 +69,13 @@ public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEnt
 
     @Inject(at = @At("TAIL"), method = "saveAdditional(Lnet/minecraft/nbt/CompoundTag;)V")
     private void saveAdditional(CompoundTag compoundTag, CallbackInfo ci) {
-        if (itemrestrictions$getPlayer() != null) {
-            compoundTag.putString("ItemRestrictionsServerPlayer", itemrestrictions$getPlayer().getUUID().toString());
+        ServerPlayer serverPlayer = itemrestrictions$getPlayer();
+        if (serverPlayer != null) {
+            compoundTag.putString("ItemRestrictionsServerPlayer", serverPlayer.getUUID().toString());
         } else {
-            if (itemrestrictions$getPlayerUUID() != null) {
-                compoundTag.putString("ItemRestrictionsServerPlayer", itemrestrictions$getPlayerUUID().toString());
+            UUID uuid = itemrestrictions$getPlayerUUID();
+            if (uuid != null) {
+                compoundTag.putString("ItemRestrictionsServerPlayer", uuid.toString());
             }
         }
     }
@@ -203,6 +204,7 @@ public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEnt
         this.lastPotionCount = lastPotionCount;
     }
 
+    @SuppressWarnings("DataFlowIssue")
     public BrewingStandBlockEntity itemrestrictions$getBrewingStandBlockEntity() {
         return (BrewingStandBlockEntity) (Object) this;
     }

@@ -2,6 +2,7 @@ package com.daqem.itemrestrictions;
 
 import com.daqem.arc.registry.ArcRegistry;
 import com.daqem.itemrestrictions.event.ArcEvents;
+import com.daqem.itemrestrictions.networking.ItemRestrictionsNetworking;
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -15,6 +16,11 @@ public class ItemRestrictions {
     public static void init() {
         registerEvents();
         initRegistry();
+        initNetworking();
+    }
+
+    private static void initNetworking() {
+        ItemRestrictionsNetworking.init();
     }
 
     private static void initRegistry() {
@@ -37,6 +43,7 @@ public class ItemRestrictions {
         return Component.translatable(MOD_ID + "." + str, objects);
     }
 
+    @SuppressWarnings("unused")
     public static MutableComponent literal(String str) {
         return Component.literal(str);
     }

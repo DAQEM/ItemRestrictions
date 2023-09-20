@@ -47,6 +47,7 @@ public abstract class MixinItemStack {
         }
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Unique
     private ItemStack jobsplus$getItemStack() {
         return (ItemStack) (Object) this;
