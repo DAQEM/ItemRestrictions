@@ -115,29 +115,31 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
                 if (!abstractFurnaceBlockEntity.getItem(1).isEmpty()) {
 
                     Recipe<?> recipe = block.itemrestrictions$getRecipe();
+                    if (recipe != null) {
 
-                    RestrictionResult result = new RestrictionResult();
+                        RestrictionResult result = new RestrictionResult();
 
-                    if (block.itemrestrictions$getPlayer() instanceof ItemRestrictionsServerPlayer player) {
-                        if (player instanceof ArcPlayer arcPlayer) {
-                            result = player.itemrestrictions$isRestricted(
-                                    new ActionDataBuilder(arcPlayer, null)
-                                            .withData(ActionDataType.ITEM_STACK, recipe.getResultItem())
-                                            .build());
+                        if (block.itemrestrictions$getPlayer() instanceof ItemRestrictionsServerPlayer player) {
+                            if (player instanceof ArcPlayer arcPlayer) {
+                                result = player.itemrestrictions$isRestricted(
+                                        new ActionDataBuilder(arcPlayer, null)
+                                                .withData(ActionDataType.ITEM_STACK, recipe.getResultItem())
+                                                .build());
+                            }
                         }
-                    }
 
-                    if (result.isRestricted(RestrictionType.SMELT)) {
-                        if (block.itemrestrictions$isLit()) {
-                            block.itemrestrictions$setLitTime(block.itemrestrictions$getLitTime() - 1);
+                        if (result.isRestricted(RestrictionType.SMELT)) {
+                            if (block.itemrestrictions$isLit()) {
+                                block.itemrestrictions$setLitTime(block.itemrestrictions$getLitTime() - 1);
+                            }
+                            blockState = blockState.setValue(AbstractFurnaceBlock.LIT, false);
+                            level.setBlock(blockPos, blockState, 3);
+                            setChanged(level, blockPos, blockState);
+                            ci.cancel();
+
+                            itemrestrictions$sendPacketCantCraft(RestrictionType.SMELT, block);
+                            block.itemrestrictions$setRestricted(true);
                         }
-                        blockState = blockState.setValue(AbstractFurnaceBlock.LIT, false);
-                        level.setBlock(blockPos, blockState, 3);
-                        setChanged(level, blockPos, blockState);
-                        ci.cancel();
-
-                        itemrestrictions$sendPacketCantCraft(RestrictionType.SMELT, block);
-                        block.itemrestrictions$setRestricted(true);
                     }
                 } else {
                     if (block.itemrestrictions$isRestricted()) {
