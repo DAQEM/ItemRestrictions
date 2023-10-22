@@ -122,10 +122,10 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
                         RestrictionResult result = new RestrictionResult();
 
                         if (block.itemrestrictions$getPlayer() instanceof ItemRestrictionsServerPlayer player) {
-                            if (player instanceof ArcPlayer arcPlayer) {
+                            if (player instanceof ArcPlayer arcPlayer && ((ServerPlayer) player).getServer() != null) {
                                 result = player.itemrestrictions$isRestricted(
                                         new ActionDataBuilder(arcPlayer, null)
-                                                .withData(ActionDataType.ITEM_STACK, recipe.getResultItem())
+                                                .withData(ActionDataType.ITEM_STACK, recipe.getResultItem(((ServerPlayer) player).getServer().registryAccess()))
                                                 .build());
                             }
                         }

@@ -47,6 +47,7 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
     modImplementation "curse.maven:arc-883593:${project.arc_file_forge}"
+    modImplementation "curse.maven:supermartijn642s-config-lib-438332:${project.config_library_file_forge}"
 }
 
 processResources {
@@ -115,6 +116,7 @@ curseforge {
         relations {
             requiredDependency("architectury-api")
             requiredDependency("arc")
+            requiredDependency("supermartijn642s-config-lib")
         }
 
         mainArtifact(remapJar) {

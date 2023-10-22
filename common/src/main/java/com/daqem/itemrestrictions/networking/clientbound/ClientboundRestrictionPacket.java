@@ -36,7 +36,7 @@ public class ClientboundRestrictionPacket extends BaseS2CMessage {
 
     @Override
     public void handle(NetworkManager.PacketContext context) {
-        ItemRestrictions.LOGGER.error("Received restriction packet from server!");
+        ItemRestrictions.LOGGER.error("Received restriction packet from server! Restriction type: " + restrictionType);
         if (context.getPlayer() instanceof LocalPlayer) {
             Screen currentScreen = Minecraft.getInstance().screen;
             if (currentScreen instanceof ItemRestrictionsScreen itemRestrictionsScreen) {

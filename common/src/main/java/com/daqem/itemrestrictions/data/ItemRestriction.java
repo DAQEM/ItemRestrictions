@@ -44,13 +44,13 @@ public class ItemRestriction {
         for (ICondition condition : this.conditions) {
             boolean met = condition.isMet(actionData);
 
-            // If a condition is not met, return a default RestrictionResult
-            if (!met && !condition.isInverted() || met && condition.isInverted()) {
-                return new RestrictionResult();
+            if (!met && condition.isInverted() || met && !condition.isInverted()) {
+                return new RestrictionResult(this.restrictionTypes);
             }
         }
+        return new RestrictionResult();
 
-        return new RestrictionResult(this.restrictionTypes);
+
     }
 
     public void setLocation(ResourceLocation location) {

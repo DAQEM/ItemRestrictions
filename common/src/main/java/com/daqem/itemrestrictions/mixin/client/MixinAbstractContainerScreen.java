@@ -2,7 +2,7 @@ package com.daqem.itemrestrictions.mixin.client;
 
 import com.daqem.itemrestrictions.client.screen.ItemRestrictionsScreen;
 import com.daqem.itemrestrictions.data.RestrictionType;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -27,10 +27,10 @@ public abstract class MixinAbstractContainerScreen extends Screen implements Ite
         this.itemrestrictions$restrictionType = restrictionType;
     }
 
-    @Inject(at = @At("TAIL"), method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V")
-    private void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
+    @Inject(at = @At("TAIL"), method = "render")
+    private void render(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo ci) {
         if (itemrestrictions$restrictionType != null && itemrestrictions$restrictionType != RestrictionType.NONE) {
-            renderCantCraftMessage(poseStack, font, width, height, 166, itemrestrictions$restrictionType);
+            renderCantCraftMessage(guiGraphics, font, width, height, 166, itemrestrictions$restrictionType);
         }
     }
 }
