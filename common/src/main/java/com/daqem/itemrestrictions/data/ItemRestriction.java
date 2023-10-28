@@ -41,16 +41,17 @@ public class ItemRestriction {
             return new RestrictionResult();
         }
 
-        for (ICondition condition : this.conditions) {
-            boolean met = condition.isMet(actionData);
+        boolean allConditionsMet = this.conditions.stream()
+                .allMatch(condition ->
+                        (condition.isMet(actionData) && !condition.isInverted()) ||
+                                (!condition.isMet(actionData) && condition.isInverted())
+                );
 
-            if (!met && condition.isInverted() || met && !condition.isInverted()) {
-                return new RestrictionResult(this.restrictionTypes);
-            }
+        if (allConditionsMet) {
+            return new RestrictionResult(this.restrictionTypes);
+        } else {
+            return new RestrictionResult();
         }
-        return new RestrictionResult();
-
-
     }
 
     public void setLocation(ResourceLocation location) {
