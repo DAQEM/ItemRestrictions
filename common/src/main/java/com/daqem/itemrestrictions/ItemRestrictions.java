@@ -1,6 +1,7 @@
 package com.daqem.itemrestrictions;
 
 import com.daqem.arc.registry.ArcRegistry;
+import com.daqem.itemrestrictions.config.ItemRestrictionsConfig;
 import com.daqem.itemrestrictions.event.ArcEvents;
 import com.daqem.itemrestrictions.networking.ItemRestrictionsNetworking;
 import com.mojang.logging.LogUtils;
@@ -17,6 +18,8 @@ public class ItemRestrictions {
         registerEvents();
         initRegistry();
         initNetworking();
+
+        ItemRestrictionsConfig.init();
     }
 
     private static void initNetworking() {

@@ -2,6 +2,7 @@ package com.daqem.itemrestrictions.networking.clientbound;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
 import com.daqem.itemrestrictions.client.screen.ItemRestrictionsScreen;
+import com.daqem.itemrestrictions.config.ItemRestrictionsConfig;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.networking.ItemRestrictionsNetworking;
 import dev.architectury.networking.NetworkManager;
@@ -36,7 +37,9 @@ public class ClientboundRestrictionPacket extends BaseS2CMessage {
 
     @Override
     public void handle(NetworkManager.PacketContext context) {
-        ItemRestrictions.LOGGER.error("Received restriction packet from server! Restriction type: " + restrictionType);
+        if (ItemRestrictionsConfig.isDebug.get()) {
+            ItemRestrictions.LOGGER.error("Received restriction packet from server! Restriction type: " + restrictionType);
+        }
         if (context.getPlayer() instanceof LocalPlayer) {
             Screen currentScreen = Minecraft.getInstance().screen;
             if (currentScreen instanceof ItemRestrictionsScreen itemRestrictionsScreen) {

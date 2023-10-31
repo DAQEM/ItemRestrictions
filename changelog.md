@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1]
+
+### Fixed
+- Issue where conditions would be OR be default instead of AND
+
 ## [1.0]
 
 - Ported to 1.20.1
