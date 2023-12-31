@@ -1,37 +1,5 @@
-# Changelog
+## [View changes here](https://github.com/DAQEM/ItemRestrictions/releases)
 
-All notable changes to this project will be documented in this file.
+[![BisectHosting code DAQEM for 25% off!](https://www.bisecthosting.com/partners/custom-banners/bb6b0cc7-75a1-4002-9257-561d8df48142.webp)](https://bisecthosting.com/DAQEM?r=Item+Restrictions+Changelog)
 
-## [1.1]
-
-### Fixed
-- Issue where conditions would be OR be default instead of AND
-
-## [1.0]
-
-- Ported to 1.20.1
-
-## [0.2.2]
-
-### Fixed
-- Forge mixin config in build.gradle.
-
-[0.2.2]: https://github.com/DAQEM/ItemRestrictions/compare/06dd02da177e0158ad6826ca935bd07b62bea313...e4d62ad65519a2c5a0ba70c83d6bdf7998f25180
-
-## [0.2.1]
-
-### Fixed
-- Condition checking.
-
-[0.2.1]:
-
-## [0.2]
-
-### Added
-- Item icons to restrictions.
-
-[0.2]: https://github.com/DAQEM/ItemRestrictions/compare/6b25ecb647b4e9a2fb95d5ee28a927f1aaf7ce1b...ed25e469b3e9ee074e0dcfcae9bc918df6eae27d
-
-## 0.1
-
-- Initial release.
+### [I trust BisectHosting with my servers, and you should too! Get 25% off your first month of a gaming server for new customers using DAQEM. They have outstanding support that's always there when you need it.](https://bisecthosting.com/DAQEM?r=Item+Restrictions+Changelog)

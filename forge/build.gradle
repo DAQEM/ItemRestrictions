@@ -48,13 +48,23 @@ dependencies {
 
     modImplementation "curse.maven:arc-883593:${project.arc_file_forge}"
     modImplementation "curse.maven:supermartijn642s-config-lib-438332:${project.config_library_file_forge}"
+
+    modRuntimeOnly "curse.maven:ui-933200:${project.ui_library_file_forge}"
 }
 
 processResources {
     inputs.property "version", project.version
+    inputs.property "minecraft_version", rootProject.minecraft_version
+    inputs.property "architectury_version", rootProject.architectury_version
+    inputs.property "arc_version", rootProject.arc_version
 
     filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
+        expand([
+                "version": project.version,
+                "minecraft_version": rootProject.minecraft_version,
+                "architectury_version": rootProject.architectury_version,
+                "arc_version": rootProject.arc_version
+        ])
     }
 }
 
@@ -80,6 +90,10 @@ sourcesJar {
     def commonSources = project(":common").sourcesJar
     dependsOn commonSources
     from commonSources.archiveFile.map { zipTree(it) }
+}
+
+remapSourcesJar {
+    archiveClassifier = "forge-sources"
 }
 
 components.java {
@@ -123,7 +137,7 @@ curseforge {
             displayName = "Item Restrictions Forge $rootProject.minecraft_version - $rootProject.mod_version"
         }
 
-        addArtifact(sourcesJar) {
+        addArtifact(remapSourcesJar) {
         }
     }
 }
@@ -135,10 +149,12 @@ modrinth {
     versionNumber = "$rootProject.mod_version"
     versionType = "$rootProject.curse_forge_release_type"
     uploadFile = remapJar
+    additionalFiles = [remapSourcesJar]
     gameVersions = ["$rootProject.minecraft_version"]
     loaders = ["forge"]
     dependencies {
         required.project "architectury-api"
         required.project "arc"
+        required.project "supermartijn642s-config-lib"
     }
 }
