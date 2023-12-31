@@ -135,7 +135,7 @@ afterEvaluate {
 
 modrinth {
     token = System.getenv("MODRINTH_API_KEY")
-    projectId = ""
+    projectId = "rU60qFq2"
     versionName = "Item Restrictions Fabric $rootProject.minecraft_version - $rootProject.mod_version"
     versionNumber = "$rootProject.mod_version"
     versionType = "$rootProject.curse_forge_release_type"
