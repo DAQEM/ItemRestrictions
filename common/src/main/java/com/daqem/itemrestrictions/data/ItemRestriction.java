@@ -98,9 +98,9 @@ public class ItemRestriction {
             });
 
             conditionsArray.forEach(jsonElement -> {
-                ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(jsonElement.getAsJsonObject(), "type"));
-                ArcRegistry.CONDITION_SERIALIZER.getOptional(type).ifPresent(serializer -> {
-                    conditions.add(serializer.fromJson(new ResourceLocation(""), jsonElement.getAsJsonObject()));
+                ResourceLocation conditionTypeLocation = new ResourceLocation(GsonHelper.getAsString(jsonElement.getAsJsonObject(), "type"));
+                ArcRegistry.CONDITION.getOptional(conditionTypeLocation).ifPresent(conditionType -> {
+                    conditions.add(conditionType.getSerializer().fromJson(new ResourceLocation(""), jsonElement.getAsJsonObject()));
                 });
             });
 

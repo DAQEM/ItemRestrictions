@@ -25,11 +25,6 @@
         "minecraft:egg",
         "minecraft:diamond_sword"
       ]
-    },
-    {
-      "type": "arc:item",
-      "item": "minecraft:potion",
-      "tag": "{Potion:\"minecraft:swiftness\"}"
     }
   ]
 }
