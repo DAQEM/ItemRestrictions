@@ -69,21 +69,24 @@ public class ItemRestriction {
             List<RestrictionType> restrictionTypes = new ArrayList<>();
             List<ICondition> conditions = new ArrayList<>();
 
-            JsonObject iconObject = GsonHelper.getAsJsonObject(jsonObject, "icon");
-            Item item = GsonHelper.getAsItem(iconObject, "item");
-            int count = GsonHelper.getAsInt(iconObject, "count", 1);
-            ItemStack iconStack = new ItemStack(item);
+            ItemStack iconStack = ItemStack.EMPTY;
+            if (jsonObject.has("icon")) {
+                JsonObject iconObject = GsonHelper.getAsJsonObject(jsonObject, "icon");
+                Item item = GsonHelper.getAsItem(iconObject, "item");
+                iconStack = new ItemStack(item);
 
-            iconStack.setCount(count);
+                int count = GsonHelper.getAsInt(iconObject, "count", 1);
+                iconStack.setCount(count);
 
-            if (iconObject.has("tag")) {
-                String tagName = GsonHelper.getAsString(iconObject, "tag");
+                if (iconObject.has("tag")) {
+                    String tagName = GsonHelper.getAsString(iconObject, "tag");
 
-                try {
-                    iconStack.setTag(TagParser.parseTag(tagName));
-                } catch (CommandSyntaxException e) {
-                    String errorMessage = String.format("Error parsing tag for PowerupInstance icon %s: %s", tagName, e.getMessage());
-                    ItemRestrictions.LOGGER.error(errorMessage);
+                    try {
+                        iconStack.setTag(TagParser.parseTag(tagName));
+                    } catch (CommandSyntaxException e) {
+                        String errorMessage = String.format("Error parsing tag for PowerupInstance icon %s: %s", tagName, e.getMessage());
+                        ItemRestrictions.LOGGER.error(errorMessage);
+                    }
                 }
             }
 
@@ -98,9 +101,9 @@ public class ItemRestriction {
             });
 
             conditionsArray.forEach(jsonElement -> {
-                ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(jsonElement.getAsJsonObject(), "type"));
-                ArcRegistry.CONDITION_SERIALIZER.getOptional(type).ifPresent(serializer -> {
-                    conditions.add(serializer.fromJson(new ResourceLocation(""), jsonElement.getAsJsonObject()));
+                ResourceLocation conditionTypeLocation = new ResourceLocation(GsonHelper.getAsString(jsonElement.getAsJsonObject(), "type"));
+                ArcRegistry.CONDITION.getOptional(conditionTypeLocation).ifPresent(conditionType -> {
+                    conditions.add(conditionType.getSerializer().fromJson(new ResourceLocation(""), jsonElement.getAsJsonObject()));
                 });
             });
 

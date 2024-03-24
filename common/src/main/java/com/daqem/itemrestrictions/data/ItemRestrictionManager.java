@@ -2,6 +2,7 @@ package com.daqem.itemrestrictions.data;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
 import com.daqem.itemrestrictions.ItemRestrictionsExpectPlatform;
+import com.daqem.itemrestrictions.config.ItemRestrictionsConfig;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,6 +35,10 @@ public abstract class ItemRestrictionManager extends SimpleJsonResourceReloadLis
     @Override
     protected void apply(@NotNull Map<ResourceLocation, JsonElement> map, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
         Map<ResourceLocation, ItemRestriction> tempItemRestrictions = new HashMap<>();
+
+        if (!ItemRestrictionsConfig.isDebug.get()) {
+            map.entrySet().removeIf(entry -> entry.getKey().getNamespace().equals("debug"));
+        }
 
         map.forEach((location, jsonElement) -> {
             try {
