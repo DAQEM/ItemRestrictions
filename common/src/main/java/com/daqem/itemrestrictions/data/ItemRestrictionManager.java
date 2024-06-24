@@ -36,7 +36,7 @@ public abstract class ItemRestrictionManager extends SimpleJsonResourceReloadLis
     protected void apply(@NotNull Map<ResourceLocation, JsonElement> map, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
         Map<ResourceLocation, ItemRestriction> tempItemRestrictions = new HashMap<>();
 
-        if (!ItemRestrictionsConfig.isDebug.get()) {
+        if (!ItemRestrictions.isDebugEnvironment()) {
             map.entrySet().removeIf(entry -> entry.getKey().getNamespace().equals("debug"));
         }
 

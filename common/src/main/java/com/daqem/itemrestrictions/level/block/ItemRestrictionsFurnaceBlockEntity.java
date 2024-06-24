@@ -2,9 +2,7 @@ package com.daqem.itemrestrictions.level.block;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
-import net.minecraft.world.item.crafting.AbstractCookingRecipe;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 
 import java.util.UUID;
@@ -25,11 +23,11 @@ public interface ItemRestrictionsFurnaceBlockEntity {
 
     boolean itemrestrictions$isLit();
 
-    RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> itemrestrictions$getQuickCheck();
+    RecipeManager.CachedCheck<SingleRecipeInput, ? extends AbstractCookingRecipe> itemrestrictions$getQuickCheck();
 
     AbstractFurnaceBlockEntity itemrestrictions$getAbstractFurnaceBlockEntity();
 
-    Recipe<?> itemrestrictions$getRecipe();
+    RecipeHolder<?> itemrestrictions$getRecipe();
 
     boolean itemrestrictions$isRestricted();
 

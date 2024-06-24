@@ -7,6 +7,7 @@ import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
+import dev.architectury.networking.NetworkManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -41,7 +42,7 @@ public abstract class MixinEnchantmentMenu extends AbstractContainerMenu {
                             .withData(ActionDataType.ITEM_STACK, getSlot(0).getItem())
                             .build());
                     if (craftingResult.isRestricted(RestrictionType.ENCHANT)) {
-                        new ClientboundRestrictionPacket(RestrictionType.ENCHANT).sendTo(serverPlayer  );
+                        NetworkManager.sendToPlayer(serverPlayer, new ClientboundRestrictionPacket(RestrictionType.ENCHANT));
                         cir.setReturnValue(false);
                     }
                 }
@@ -52,7 +53,7 @@ public abstract class MixinEnchantmentMenu extends AbstractContainerMenu {
     @Inject(at = @At("HEAD"), method = "slotsChanged(Lnet/minecraft/world/Container;)V")
     private void slotsChanged(Container container, CallbackInfo ci) {
         if (itemrestrictions$player != null) {
-            new ClientboundRestrictionPacket(RestrictionType.NONE).sendTo(this.itemrestrictions$player);
+            NetworkManager.sendToPlayer(this.itemrestrictions$player, new ClientboundRestrictionPacket(RestrictionType.NONE));
         }
     }
 }

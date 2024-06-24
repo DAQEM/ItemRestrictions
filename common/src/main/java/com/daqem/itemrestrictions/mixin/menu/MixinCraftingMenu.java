@@ -7,10 +7,14 @@ import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
+import dev.architectury.networking.NetworkManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,14 +22,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CraftingMenu.class)
-public abstract class MixinCraftingMenu extends RecipeBookMenu<CraftingContainer> {
+public abstract class MixinCraftingMenu extends RecipeBookMenu<CraftingInput, CraftingRecipe> {
 
     public MixinCraftingMenu(MenuType<?> menuType, int i) {
         super(menuType, i);
     }
 
-    @Inject(at = @At("TAIL"), method = "slotChangedCraftingGrid(Lnet/minecraft/world/inventory/AbstractContainerMenu;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/inventory/CraftingContainer;Lnet/minecraft/world/inventory/ResultContainer;)V")
-    private static void slotChangedCraftingGrid(AbstractContainerMenu abstractContainerMenu, Level level, Player player, CraftingContainer craftingContainer, ResultContainer resultContainer, CallbackInfo ci) {
+    @Inject(at = @At("TAIL"), method = "slotChangedCraftingGrid")
+    private static void slotChangedCraftingGrid(AbstractContainerMenu abstractContainerMenu, Level level, Player player, CraftingContainer craftingContainer, ResultContainer resultContainer, RecipeHolder<CraftingRecipe> recipeHolder, CallbackInfo ci) {
         if (player instanceof ServerPlayer serverPlayer) {
             if (serverPlayer instanceof ItemRestrictionsServerPlayer itemRestrictionsPlayer) {
                 if (serverPlayer instanceof ArcPlayer arcPlayer) {
@@ -35,9 +39,9 @@ public abstract class MixinCraftingMenu extends RecipeBookMenu<CraftingContainer
                             .build());
                     if (restrictionResult.isRestricted(RestrictionType.CRAFT)) {
                         resultContainer.setItem(0, ItemStack.EMPTY);
-                        new ClientboundRestrictionPacket(RestrictionType.CRAFT).sendTo(serverPlayer);
+                        NetworkManager.sendToPlayer(serverPlayer, new ClientboundRestrictionPacket(RestrictionType.CRAFT));
                     } else {
-                        new ClientboundRestrictionPacket(RestrictionType.NONE).sendTo(serverPlayer);
+                        NetworkManager.sendToPlayer(serverPlayer, new ClientboundRestrictionPacket(RestrictionType.NONE));
                     }
                 }
             }
