@@ -2,20 +2,35 @@ package com.daqem.itemrestrictions.networking.clientbound;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
 import com.daqem.itemrestrictions.client.screen.ItemRestrictionsScreen;
-import com.daqem.itemrestrictions.config.ItemRestrictionsConfig;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.networking.ItemRestrictionsNetworking;
 import dev.architectury.networking.NetworkManager;
-import dev.architectury.networking.simple.BaseS2CMessage;
-import dev.architectury.networking.simple.MessageType;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import org.jetbrains.annotations.NotNull;
 
-public class ClientboundRestrictionPacket extends BaseS2CMessage {
+public class ClientboundRestrictionPacket implements CustomPacketPayload {
 
     private final RestrictionType restrictionType;
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, ClientboundRestrictionPacket> STREAM_CODEC = new StreamCodec<>() {
+        @Override
+        public @NotNull ClientboundRestrictionPacket decode(RegistryFriendlyByteBuf buf) {
+            return new ClientboundRestrictionPacket(buf);
+        }
+
+        @Override
+        public void encode(RegistryFriendlyByteBuf buf, ClientboundRestrictionPacket packet) {
+            buf.writeEnum(packet.restrictionType);
+        }
+    };
 
     public ClientboundRestrictionPacket(RestrictionType restrictionType) {
         this.restrictionType = restrictionType;
@@ -26,24 +41,19 @@ public class ClientboundRestrictionPacket extends BaseS2CMessage {
     }
 
     @Override
-    public MessageType getType() {
-        return ItemRestrictionsNetworking.CLIENTBOUND_RESTRICTION;
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return ItemRestrictionsNetworking.CLIENTBOUND_RESTRICTION_TYPE;
     }
 
-    @Override
-    public void write(FriendlyByteBuf buf) {
-        buf.writeEnum(restrictionType);
-    }
-
-    @Override
-    public void handle(NetworkManager.PacketContext context) {
-        if (ItemRestrictionsConfig.isDebug.get()) {
-            ItemRestrictions.LOGGER.error("Received restriction packet from server! Restriction type: " + restrictionType);
+    @Environment(EnvType.CLIENT)
+    public static void handleClientSide(ClientboundRestrictionPacket packet, NetworkManager.PacketContext context) {
+        if (ItemRestrictions.isDebugEnvironment()) {
+            ItemRestrictions.LOGGER.error("Received restriction packet from server! Restriction type: " + packet.restrictionType);
         }
         if (context.getPlayer() instanceof LocalPlayer) {
             Screen currentScreen = Minecraft.getInstance().screen;
             if (currentScreen instanceof ItemRestrictionsScreen itemRestrictionsScreen) {
-                itemRestrictionsScreen.itemrestrictions$cantCraft(restrictionType);
+                itemRestrictionsScreen.itemrestrictions$cantCraft(packet.restrictionType);
             }
         }
     }

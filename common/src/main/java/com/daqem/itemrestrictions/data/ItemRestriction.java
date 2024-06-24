@@ -3,20 +3,16 @@ package com.daqem.itemrestrictions.data;
 import com.daqem.arc.api.action.data.ActionData;
 import com.daqem.arc.api.action.data.type.ActionDataType;
 import com.daqem.arc.api.condition.ICondition;
+import com.daqem.arc.data.serializer.ArcSerializer;
 import com.daqem.arc.registry.ArcRegistry;
 import com.daqem.itemrestrictions.ItemRestrictions;
 import com.google.gson.*;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ItemRestriction {
@@ -58,7 +54,7 @@ public class ItemRestriction {
         this.location = location;
     }
 
-    public static class Serializer implements JsonDeserializer<ItemRestriction> {
+    public static class Serializer implements JsonDeserializer<ItemRestriction>, ArcSerializer {
 
         @Override
         public ItemRestriction deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -71,23 +67,7 @@ public class ItemRestriction {
 
             ItemStack iconStack = ItemStack.EMPTY;
             if (jsonObject.has("icon")) {
-                JsonObject iconObject = GsonHelper.getAsJsonObject(jsonObject, "icon");
-                Item item = GsonHelper.getAsItem(iconObject, "item");
-                iconStack = new ItemStack(item);
-
-                int count = GsonHelper.getAsInt(iconObject, "count", 1);
-                iconStack.setCount(count);
-
-                if (iconObject.has("tag")) {
-                    String tagName = GsonHelper.getAsString(iconObject, "tag");
-
-                    try {
-                        iconStack.setTag(TagParser.parseTag(tagName));
-                    } catch (CommandSyntaxException e) {
-                        String errorMessage = String.format("Error parsing tag for PowerupInstance icon %s: %s", tagName, e.getMessage());
-                        ItemRestrictions.LOGGER.error(errorMessage);
-                    }
-                }
+                iconStack = getItemStack(jsonObject.getAsJsonObject("icon"));
             }
 
             restrictionTypesArray.forEach(jsonElement -> {
@@ -101,9 +81,9 @@ public class ItemRestriction {
             });
 
             conditionsArray.forEach(jsonElement -> {
-                ResourceLocation conditionTypeLocation = new ResourceLocation(GsonHelper.getAsString(jsonElement.getAsJsonObject(), "type"));
+                ResourceLocation conditionTypeLocation = ResourceLocation.parse(GsonHelper.getAsString(jsonElement.getAsJsonObject(), "type"));
                 ArcRegistry.CONDITION.getOptional(conditionTypeLocation).ifPresent(conditionType -> {
-                    conditions.add(conditionType.getSerializer().fromJson(new ResourceLocation(""), jsonElement.getAsJsonObject()));
+                    conditions.add(conditionType.getSerializer().fromJson(ResourceLocation.parse(""), jsonElement.getAsJsonObject()));
                 });
             });
 

@@ -1,8 +1,12 @@
 {
   "icon": {
-    "item": "minecraft:stone",
-    "tag": "{Potion:\"minecraft:swiftness\"}",
-    "count": 3
+    "id": "minecraft:potion",
+    "count": 1,
+    "components": {
+      "minecraft:potion_contents": {
+        "potion": "minecraft:swiftness"
+      }
+    }
   },
   "types": [
     "craft",

@@ -2,6 +2,7 @@ package com.daqem.itemrestrictions.mixin.menu;
 
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
+import dev.architectury.networking.NetworkManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -36,7 +37,7 @@ public abstract class MixinItemCombinerMenu extends AbstractContainerMenu {
         if (itemrestrictions$getMenu() instanceof AnvilMenu || itemrestrictions$getMenu() instanceof SmithingMenu) {
             if (this.player instanceof ServerPlayer serverPlayer) {
                 if (!(!getSlot(0).getItem().isEmpty() && !getSlot(1).getItem().isEmpty())) {
-                    new ClientboundRestrictionPacket(RestrictionType.NONE).sendTo(serverPlayer);
+                    NetworkManager.sendToPlayer(serverPlayer, new ClientboundRestrictionPacket(RestrictionType.NONE));
                 }
             }
         }

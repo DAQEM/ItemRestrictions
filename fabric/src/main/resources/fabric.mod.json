@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "id": "itemrestrictions",
+  "id": "${mod_id}",
   "version": "${version}",
-  "name": "Item Restrictions",
-  "description": "",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
   "authors": [
-    "DAQEM"
+    "${mod_author}"
   ],
   "contact": {
-    "homepage": "https://daqem.com/",
-    "sources": "https://github.com/DAQEM/ItemRestrictions"
+    "homepage": "${mod_website}",
+    "sources": "${mod_repository}"
   },
-  "license": "MIT",
+  "license": "${mod_license}",
   "icon": "icon.png",
   "environment": "*",
   "entrypoints": {

@@ -8,7 +8,9 @@ import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.level.block.ItemRestrictionsBrewingStandBlockEntity;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
+import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -56,19 +58,8 @@ public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEnt
         super(blockEntityType, blockPos, blockState);
     }
 
-    @Inject(at = @At("TAIL"), method = "stillValid(Lnet/minecraft/world/entity/player/Player;)Z")
-    private void stillValid(Player player, CallbackInfoReturnable<Boolean> cir) {
-        if (player instanceof ServerPlayer serverPlayer) {
-            if (itemrestrictions$getPlayer() != serverPlayer) {
-                itemrestrictions$setPlayer(serverPlayer);
-                itemrestrictions$setPlayerUUID(serverPlayer.getUUID());
-                saveWithFullMetadata();
-            }
-        }
-    }
-
-    @Inject(at = @At("TAIL"), method = "saveAdditional(Lnet/minecraft/nbt/CompoundTag;)V")
-    private void saveAdditional(CompoundTag compoundTag, CallbackInfo ci) {
+    @Inject(at = @At("TAIL"), method = "saveAdditional")
+    private void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfo ci) {
         ServerPlayer serverPlayer = itemrestrictions$getPlayer();
         if (serverPlayer != null) {
             compoundTag.putString("ItemRestrictionsServerPlayer", serverPlayer.getUUID().toString());
@@ -80,8 +71,8 @@ public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEnt
         }
     }
 
-    @Inject(at = @At("TAIL"), method = "load(Lnet/minecraft/nbt/CompoundTag;)V")
-    private void load(CompoundTag compoundTag, CallbackInfo ci) {
+    @Inject(at = @At("TAIL"), method = "loadAdditional")
+    private void load(CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfo ci) {
         if (compoundTag.contains("ItemRestrictionsServerPlayer")) {
             itemrestrictions$setPlayerUUID(UUID.fromString(compoundTag.getString("ItemRestrictionsServerPlayer")));
         }
@@ -100,7 +91,7 @@ public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEnt
                     ItemStack ingredient = brewingStandBlockEntity.getItem(3);
                     for (int i = 0; i < 3; i++) {
                         ItemStack potion = brewingStandBlockEntity.getItem(i);
-                        ItemStack mixedPotion = PotionBrewing.mix(ingredient, potion);
+                        ItemStack mixedPotion = level.potionBrewing().mix(ingredient, potion);
 
                         RestrictionResult result = new RestrictionResult();
 
@@ -149,7 +140,7 @@ public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEnt
     private static void itemrestrictions$sendPacketCantCraft(RestrictionType type, ItemRestrictionsBrewingStandBlockEntity block) {
         if (block.itemrestrictions$getPlayer().containerMenu instanceof BrewingStandMenu menu) {
             if (menu.brewingStand.equals(block.itemrestrictions$getBrewingStandBlockEntity())) {
-                new ClientboundRestrictionPacket(type).sendTo(block.itemrestrictions$getPlayer());
+                NetworkManager.sendToPlayer(block.itemrestrictions$getPlayer(), new ClientboundRestrictionPacket(type));
             }
         }
     }

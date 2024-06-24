@@ -3,33 +3,29 @@ package com.daqem.itemrestrictions.mixin.block;
 import com.daqem.arc.api.action.data.ActionDataBuilder;
 import com.daqem.arc.api.action.data.type.ActionDataType;
 import com.daqem.arc.api.player.ArcPlayer;
-import com.daqem.itemrestrictions.ItemRestrictions;
 import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.level.block.ItemRestrictionsFurnaceBlockEntity;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
+import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Container;
 import net.minecraft.world.WorldlyContainer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractFurnaceMenu;
-import net.minecraft.world.inventory.RecipeHolder;
+import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.AbstractCookingRecipe;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,13 +33,12 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 import java.util.UUID;
 
 @Mixin(AbstractFurnaceBlockEntity.class)
-public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, RecipeHolder, StackedContentsCompatible, ItemRestrictionsFurnaceBlockEntity {
+public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible, ItemRestrictionsFurnaceBlockEntity {
 
     @Unique
     @Nullable
@@ -59,34 +54,22 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
     @Shadow
     int litTime;
 
+    @Shadow protected NonNullList<ItemStack> items;
+
     protected MixinAbstractFurnaceBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
     }
 
-    @Shadow
-    public abstract @NotNull ItemStack getItem(int i);
-
     @Unique
-    private RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> itemrestrictions$quickCheck;
+    private RecipeManager.CachedCheck<SingleRecipeInput, ? extends AbstractCookingRecipe> itemrestrictions$quickCheck;
 
     @Inject(at = @At("TAIL"), method = "<init>")
     private void init(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState, RecipeType<? extends AbstractCookingRecipe> recipeType, CallbackInfo ci) {
         this.itemrestrictions$quickCheck = RecipeManager.createCheck(recipeType);
     }
 
-    @Inject(at = @At("TAIL"), method = "stillValid(Lnet/minecraft/world/entity/player/Player;)Z")
-    private void stillValid(Player player, CallbackInfoReturnable<Boolean> cir) {
-        if (player instanceof ServerPlayer serverPlayer) {
-            if (itemrestrictions$getPlayer() != serverPlayer) {
-                itemrestrictions$setPlayer(serverPlayer);
-                itemrestrictions$setPlayerUUID(serverPlayer.getUUID());
-                saveWithFullMetadata();
-            }
-        }
-    }
-
-    @Inject(at = @At("TAIL"), method = "saveAdditional(Lnet/minecraft/nbt/CompoundTag;)V")
-    private void saveAdditional(CompoundTag compoundTag, CallbackInfo ci) {
+    @Inject(at = @At("TAIL"), method = "saveAdditional")
+    private void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfo ci) {
         ServerPlayer serverPlayer = itemrestrictions$getPlayer();
         if (serverPlayer != null) {
             compoundTag.putString("ItemRestrictionsServerPlayer", serverPlayer.getUUID().toString());
@@ -98,8 +81,8 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
         }
     }
 
-    @Inject(at = @At("TAIL"), method = "load(Lnet/minecraft/nbt/CompoundTag;)V")
-    private void load(CompoundTag compoundTag, CallbackInfo ci) {
+    @Inject(at = @At("TAIL"), method = "loadAdditional")
+    private void load(CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfo ci) {
         if (compoundTag.contains("ItemRestrictionsServerPlayer")) {
             itemrestrictions$setPlayerUUID(UUID.fromString(compoundTag.getString("ItemRestrictionsServerPlayer")));
         }
@@ -116,9 +99,9 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
             if (block.itemrestrictions$getPlayer() != null && !abstractFurnaceBlockEntity.getItem(0).isEmpty()) {
                 if (!abstractFurnaceBlockEntity.getItem(1).isEmpty()) {
 
-                    Recipe<?> recipe = block.itemrestrictions$getRecipe();
-                    if (recipe != null) {
-
+                    RecipeHolder<?> recipeHolder = block.itemrestrictions$getRecipe();
+                    if (recipeHolder != null) {
+                        Recipe<?> recipe = recipeHolder.value();
                         RestrictionResult result = new RestrictionResult();
 
                         if (block.itemrestrictions$getPlayer() instanceof ItemRestrictionsServerPlayer player) {
@@ -162,7 +145,7 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
     private static void itemrestrictions$sendPacketCantCraft(RestrictionType type, ItemRestrictionsFurnaceBlockEntity block) {
         if (block.itemrestrictions$getPlayer().containerMenu instanceof AbstractFurnaceMenu menu) {
             if (menu.container.equals(block.itemrestrictions$getAbstractFurnaceBlockEntity())) {
-                new ClientboundRestrictionPacket(type).sendTo(block.itemrestrictions$getPlayer());
+                NetworkManager.sendToPlayer(block.itemrestrictions$getPlayer(), new ClientboundRestrictionPacket(type));
             }
         }
     }
@@ -204,7 +187,7 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
 
     @Override
     @Nullable
-    public RecipeManager.CachedCheck<Container, ? extends AbstractCookingRecipe> itemrestrictions$getQuickCheck() {
+    public RecipeManager.CachedCheck<SingleRecipeInput, ? extends AbstractCookingRecipe> itemrestrictions$getQuickCheck() {
         return itemrestrictions$quickCheck;
     }
 
@@ -216,12 +199,12 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
 
     @Override
     @Nullable
-    public Recipe<?> itemrestrictions$getRecipe() {
+    public RecipeHolder<?> itemrestrictions$getRecipe() {
         if (getLevel() == null) return null;
         if (getItem(0).isEmpty()) return null;
         if (getItem(1).isEmpty()) return null;
         if (itemrestrictions$getQuickCheck() == null) return null;
-        return Objects.requireNonNull(itemrestrictions$getQuickCheck()).getRecipeFor(this, getLevel()).orElse(null);
+        return Objects.requireNonNull(itemrestrictions$getQuickCheck()).getRecipeFor(new SingleRecipeInput(this.items.get(0)), getLevel()).orElse(null);
     }
 
     @Override

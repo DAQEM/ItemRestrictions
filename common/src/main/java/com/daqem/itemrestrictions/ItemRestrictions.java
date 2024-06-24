@@ -18,8 +18,6 @@ public class ItemRestrictions {
         registerEvents();
         initRegistry();
         initNetworking();
-
-        ItemRestrictionsConfig.init();
     }
 
     private static void initNetworking() {
@@ -35,7 +33,7 @@ public class ItemRestrictions {
     }
 
     public static ResourceLocation getId(String id) {
-        return new ResourceLocation(MOD_ID, id);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, id);
     }
 
     public static MutableComponent translatable(String str) {
@@ -49,5 +47,9 @@ public class ItemRestrictions {
     @SuppressWarnings("unused")
     public static MutableComponent literal(String str) {
         return Component.literal(str);
+    }
+
+    public static boolean isDebugEnvironment() {
+        return ItemRestrictionsConfig.DEBUG;
     }
 }
