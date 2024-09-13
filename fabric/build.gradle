@@ -38,8 +38,8 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 
+    modImplementation "curse.maven:supermartijn642s-config-lib-438332:${project.config_library_file_fabric}"
     modImplementation "curse.maven:arc-883593:${project.arc_file_fabric}"
-
     modRuntimeOnly "curse.maven:ui-933200:${project.ui_library_file_fabric}"
 }
 
@@ -56,6 +56,7 @@ processResources {
 
             "minecraft_version": project.minecraft_version,
             "architectury_version": project.architectury_version,
+            "config_library_version": project.config_library_version,
             "arc_version": project.arc_version
     ]
     inputs.properties replaceProperties
