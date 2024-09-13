@@ -2,6 +2,7 @@ package com.daqem.itemrestrictions.networking.clientbound;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
 import com.daqem.itemrestrictions.client.screen.ItemRestrictionsScreen;
+import com.daqem.itemrestrictions.data.ItemRestrictionManager;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.networking.ItemRestrictionsNetworking;
 import dev.architectury.networking.NetworkManager;
@@ -49,6 +50,7 @@ public class ClientboundRestrictionPacket implements CustomPacketPayload {
     public static void handleClientSide(ClientboundRestrictionPacket packet, NetworkManager.PacketContext context) {
         if (ItemRestrictions.isDebugEnvironment()) {
             ItemRestrictions.LOGGER.error("Received restriction packet from server! Restriction type: " + packet.restrictionType);
+            ItemRestrictions.LOGGER.info("Amount of item restrictions on the client: " + ItemRestrictionManager.getInstance().getItemRestrictions().size());
         }
         if (context.getPlayer() instanceof LocalPlayer) {
             Screen currentScreen = Minecraft.getInstance().screen;

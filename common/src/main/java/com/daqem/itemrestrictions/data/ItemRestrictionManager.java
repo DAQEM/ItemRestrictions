@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -42,8 +43,9 @@ public abstract class ItemRestrictionManager extends SimpleJsonResourceReloadLis
 
         map.forEach((location, jsonElement) -> {
             try {
-                ItemRestriction itemRestriction = GSON.fromJson(jsonElement.getAsJsonObject(), ItemRestriction.class);
-                itemRestriction.setLocation(location);
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                jsonObject.addProperty("location", location.toString());
+                ItemRestriction itemRestriction = GSON.fromJson(jsonObject, ItemRestriction.class);
                 tempItemRestrictions.put(location, itemRestriction);
             } catch (Exception e) {
                 ItemRestrictions.LOGGER.error("Could not deserialize item restriction {} because: {}", location.toString(), e.getMessage());
@@ -60,5 +62,17 @@ public abstract class ItemRestrictionManager extends SimpleJsonResourceReloadLis
 
     public List<ItemRestriction> getItemRestrictions() {
         return itemRestrictions.values().asList();
+    }
+
+    public ItemRestriction getItemRestriction(ResourceLocation location) {
+        return itemRestrictions.get(location);
+    }
+
+    public void setItemRestrictions(List<ItemRestriction> itemRestrictions) {
+        this.itemRestrictions = itemRestrictions.stream()
+                .collect(ImmutableMap.toImmutableMap(
+                        ItemRestriction::getLocation,
+                        itemRestriction -> itemRestriction
+                ));
     }
 }

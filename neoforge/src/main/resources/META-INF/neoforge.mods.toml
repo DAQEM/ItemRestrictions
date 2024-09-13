@@ -35,6 +35,13 @@ ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies."${mod_id}"]]
+modId = "supermartijn642configlib"
+mandatory = true
+versionRange = "[${config_library_version},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
 modId = "arc"
 type = "required"
 versionRange = "[${arc_version},)"

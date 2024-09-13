@@ -15,6 +15,7 @@ public class ItemRestrictions {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static void init() {
+        ItemRestrictionsConfig.init();
         registerEvents();
         initRegistry();
         initNetworking();
@@ -50,6 +51,6 @@ public class ItemRestrictions {
     }
 
     public static boolean isDebugEnvironment() {
-        return ItemRestrictionsConfig.DEBUG;
+        return ItemRestrictionsConfig.isDebug.get();
     }
 }
