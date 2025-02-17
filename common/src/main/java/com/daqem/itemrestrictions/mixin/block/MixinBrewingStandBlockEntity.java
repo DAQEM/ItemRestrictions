@@ -6,6 +6,7 @@ import com.daqem.arc.api.player.ArcPlayer;
 import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.level.block.ItemRestrictionsBrewingStandBlockEntity;
+import com.daqem.itemrestrictions.level.menu.ItemRestrictionsBrewingStandMenu;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
 import dev.architectury.networking.NetworkManager;
@@ -138,8 +139,8 @@ public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEnt
 
     @Unique
     private static void itemrestrictions$sendPacketCantCraft(RestrictionType type, ItemRestrictionsBrewingStandBlockEntity block) {
-        if (block.itemrestrictions$getPlayer().containerMenu instanceof BrewingStandMenu menu) {
-            if (menu.brewingStand.equals(block.itemrestrictions$getBrewingStandBlockEntity())) {
+        if (block.itemrestrictions$getPlayer().containerMenu instanceof ItemRestrictionsBrewingStandMenu menu) {
+            if (menu.itemrestrictions$getBrewingStand().equals(block.itemrestrictions$getBrewingStandBlockEntity())) {
                 NetworkManager.sendToPlayer(block.itemrestrictions$getPlayer(), new ClientboundRestrictionPacket(type));
             }
         }

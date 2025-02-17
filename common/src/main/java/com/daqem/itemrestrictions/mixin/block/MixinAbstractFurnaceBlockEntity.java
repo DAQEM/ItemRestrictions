@@ -6,6 +6,7 @@ import com.daqem.arc.api.player.ArcPlayer;
 import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.level.block.ItemRestrictionsFurnaceBlockEntity;
+import com.daqem.itemrestrictions.level.menu.ItemRestrictionsAbstractFurnaceMenu;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
 import dev.architectury.networking.NetworkManager;
@@ -143,8 +144,8 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
 
     @Unique
     private static void itemrestrictions$sendPacketCantCraft(RestrictionType type, ItemRestrictionsFurnaceBlockEntity block) {
-        if (block.itemrestrictions$getPlayer().containerMenu instanceof AbstractFurnaceMenu menu) {
-            if (menu.container.equals(block.itemrestrictions$getAbstractFurnaceBlockEntity())) {
+        if (block.itemrestrictions$getPlayer().containerMenu instanceof ItemRestrictionsAbstractFurnaceMenu menu) {
+            if (menu.itemrestrictions$getContainer().equals(block.itemrestrictions$getAbstractFurnaceBlockEntity())) {
                 NetworkManager.sendToPlayer(block.itemrestrictions$getPlayer(), new ClientboundRestrictionPacket(type));
             }
         }
