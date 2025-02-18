@@ -23,14 +23,13 @@
     ]
   },
   "mixins": [
-    "itemrestrictions.mixins.json",
     "itemrestrictions-common.mixins.json"
   ],
   "depends": {
     "fabric": "*",
     "minecraft": ">=${minecraft_version}",
     "architectury": ">=${architectury_version}",
-    "supermartijn642configlib": ">=${config_library_version}",
+    "yamlconfig": ">=${config_library_version}",
     "arc": ">=${arc_version}"
   }
 }
