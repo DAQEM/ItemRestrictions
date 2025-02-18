@@ -1,8 +1,10 @@
 package com.daqem.itemrestrictions.config;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
-import com.supermartijn642.configlib.api.ConfigBuilders;
-import com.supermartijn642.configlib.api.IConfigBuilder;
+import com.daqem.yamlconfig.api.config.ConfigExtension;
+import com.daqem.yamlconfig.api.config.ConfigType;
+import com.daqem.yamlconfig.api.config.IConfigBuilder;
+import com.daqem.yamlconfig.impl.config.ConfigBuilder;
 
 import java.util.function.Supplier;
 
@@ -11,10 +13,11 @@ public class ItemRestrictionsConfig {
     public static final Supplier<Boolean> isDebug;
 
     static {
-        IConfigBuilder config = ConfigBuilders.newTomlConfig(ItemRestrictions.MOD_ID, null, false);
+        IConfigBuilder config = new ConfigBuilder(ItemRestrictions.MOD_ID, "item-restrictions-common", ConfigExtension.YAML, ConfigType.COMMON);
 
         config.push("debug");
-        isDebug = config.comment("if true, debug mode is enabled").define("is_debug", false);
+        isDebug = config.defineBoolean("is_debug", false)
+                .withComments("if true, debug mode is enabled");
         config.pop();
 
         config.build();

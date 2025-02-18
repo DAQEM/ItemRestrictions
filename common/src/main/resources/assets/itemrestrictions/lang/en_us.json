@@ -8,5 +8,9 @@
   "itemrestrictions.inventory.cant_break_block": "You can't break this block yet.",
   "itemrestrictions.inventory.cant_item_break_block": "You can't break this block with this item yet.",
   "itemrestrictions.inventory.cant_place_block": "You can't place this block yet.",
-  "itemrestrictions.inventory.cant_hurt_entity": "You can't hurt with this item yet."
+  "itemrestrictions.inventory.cant_hurt_entity": "You can't hurt with this item yet.",
+  "yamlconfig.itemrestrictions": "Item Restrictions",
+  "yamlconfig.itemrestrictions.item-restrictions-common": "Common",
+  "yamlconfig.itemrestrictions.item-restrictions-common.debug": "Debug",
+  "yamlconfig.itemrestrictions.item-restrictions-common.debug.is_debug": "Debug Enabled"
 }
