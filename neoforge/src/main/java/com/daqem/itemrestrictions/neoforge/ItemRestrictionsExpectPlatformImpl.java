@@ -1,8 +1,8 @@
-package com.daqem.itemrestrictions.forge;
+package com.daqem.itemrestrictions.neoforge;
 
 import com.daqem.itemrestrictions.ItemRestrictionsExpectPlatform;
 import com.daqem.itemrestrictions.data.ItemRestrictionManager;
-import com.daqem.itemrestrictions.forge.data.ItemRestrictionManagerForge;
+import com.daqem.itemrestrictions.neoforge.data.ItemRestrictionManagerForge;
 import net.neoforged.fml.loading.FMLPaths;
 
 import java.nio.file.Path;

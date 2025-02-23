@@ -1,7 +1,7 @@
-package com.daqem.itemrestrictions.forge;
+package com.daqem.itemrestrictions.neoforge;
 
 import com.daqem.itemrestrictions.client.ItemRestrictionsClient;
-import com.daqem.itemrestrictions.forge.data.ItemRestrictionManagerForge;
+import com.daqem.itemrestrictions.neoforge.data.ItemRestrictionManagerForge;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
