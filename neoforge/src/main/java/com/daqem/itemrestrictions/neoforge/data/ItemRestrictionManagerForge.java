@@ -1,4 +1,4 @@
-package com.daqem.itemrestrictions.forge.data;
+package com.daqem.itemrestrictions.neoforge.data;
 
 import com.daqem.itemrestrictions.data.ItemRestrictionManager;
 import com.google.gson.JsonElement;

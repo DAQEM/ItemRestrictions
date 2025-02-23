@@ -1,4 +1,4 @@
-package com.daqem.itemrestrictions.forge;
+package com.daqem.itemrestrictions.neoforge;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
 import dev.architectury.utils.EnvExecutor;
