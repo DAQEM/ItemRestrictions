@@ -14,14 +14,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.WorldlyContainer;
-import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.inventory.StackedContentsCompatible;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
@@ -53,9 +52,10 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
     private boolean itemrestrictions$isRestricted = false;
 
     @Shadow
-    int litTime;
+    protected NonNullList<ItemStack> items;
 
-    @Shadow protected NonNullList<ItemStack> items;
+    @Shadow
+    int litTimeRemaining;
 
     protected MixinAbstractFurnaceBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
@@ -84,16 +84,15 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
 
     @Inject(at = @At("TAIL"), method = "loadAdditional")
     private void load(CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfo ci) {
-        if (compoundTag.contains("ItemRestrictionsServerPlayer")) {
-            itemrestrictions$setPlayerUUID(UUID.fromString(compoundTag.getString("ItemRestrictionsServerPlayer")));
-        }
+        compoundTag.getString("ItemRestrictionsServerPlayer").ifPresent(uuid ->
+                itemrestrictions$setPlayerUUID(UUID.fromString(uuid)));
     }
 
-    @Inject(at = @At(value = "HEAD"), method = "serverTick(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity;)V", cancellable = true)
-    private static void serverTickRecipe(Level level, BlockPos blockPos, BlockState blockState, AbstractFurnaceBlockEntity abstractFurnaceBlockEntity, CallbackInfo ci) {
+    @Inject(at = @At(value = "HEAD"), method = "serverTick", cancellable = true)
+    private static void serverTickRecipe(ServerLevel serverLevel, BlockPos blockPos, BlockState blockState, AbstractFurnaceBlockEntity abstractFurnaceBlockEntity, CallbackInfo ci) {
         if (abstractFurnaceBlockEntity instanceof ItemRestrictionsFurnaceBlockEntity block) {
-            if (block.itemrestrictions$getPlayer() == null && block.itemrestrictions$getPlayerUUID() != null && level.getServer() != null) {
-                ServerPlayer player = level.getServer().getPlayerList().getPlayer(block.itemrestrictions$getPlayerUUID());
+            if (block.itemrestrictions$getPlayer() == null && block.itemrestrictions$getPlayerUUID() != null) {
+                ServerPlayer player = serverLevel.getServer().getPlayerList().getPlayer(block.itemrestrictions$getPlayerUUID());
                 block.itemrestrictions$setPlayer(player);
 
             }
@@ -109,7 +108,7 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
                             if (player instanceof ArcPlayer arcPlayer && ((ServerPlayer) player).getServer() != null) {
                                 result = player.itemrestrictions$isRestricted(
                                         new ActionDataBuilder(arcPlayer, null)
-                                                .withData(ActionDataType.ITEM_STACK, recipe.getResultItem(((ServerPlayer) player).getServer().registryAccess()))
+                                                .withData(ActionDataType.ITEM_STACK, recipe.assemble(null, ((ServerPlayer) player).getServer().registryAccess()))
                                                 .build());
                             }
                         }
@@ -119,8 +118,8 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
                                 block.itemrestrictions$setLitTime(block.itemrestrictions$getLitTime() - 1);
                             }
                             blockState = blockState.setValue(AbstractFurnaceBlock.LIT, false);
-                            level.setBlock(blockPos, blockState, 3);
-                            setChanged(level, blockPos, blockState);
+                            serverLevel.setBlock(blockPos, blockState, 3);
+                            setChanged(serverLevel, blockPos, blockState);
                             ci.cancel();
 
                             itemrestrictions$sendPacketCantCraft(RestrictionType.SMELT, block);
@@ -173,12 +172,12 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
 
     @Override
     public int itemrestrictions$getLitTime() {
-        return litTime;
+        return litTimeRemaining;
     }
 
     @Override
     public void itemrestrictions$setLitTime(int litTime) {
-        this.litTime = litTime;
+        this.litTimeRemaining = litTime;
     }
 
     @Override
@@ -201,11 +200,11 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
     @Override
     @Nullable
     public RecipeHolder<?> itemrestrictions$getRecipe() {
-        if (getLevel() == null) return null;
+        if (getLevel() == null || getLevel().isClientSide) return null;
         if (getItem(0).isEmpty()) return null;
         if (getItem(1).isEmpty()) return null;
         if (itemrestrictions$getQuickCheck() == null) return null;
-        return Objects.requireNonNull(itemrestrictions$getQuickCheck()).getRecipeFor(new SingleRecipeInput(this.items.get(0)), getLevel()).orElse(null);
+        return Objects.requireNonNull(itemrestrictions$getQuickCheck()).getRecipeFor(new SingleRecipeInput(this.items.getFirst()), (ServerLevel) getLevel()).orElse(null);
     }
 
     @Override

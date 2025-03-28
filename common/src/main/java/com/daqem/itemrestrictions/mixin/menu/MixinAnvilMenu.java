@@ -10,10 +10,7 @@ import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionP
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AnvilMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.ItemCombinerMenu;
-import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
@@ -25,8 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AnvilMenu.class)
 public abstract class MixinAnvilMenu extends ItemCombinerMenu {
 
-    public MixinAnvilMenu(@Nullable MenuType<?> menuType, int i, Inventory inventory, ContainerLevelAccess containerLevelAccess) {
-        super(menuType, i, inventory, containerLevelAccess);
+    public MixinAnvilMenu(@Nullable MenuType<?> menuType, int i, Inventory inventory, ContainerLevelAccess containerLevelAccess, ItemCombinerMenuSlotDefinition itemCombinerMenuSlotDefinition) {
+        super(menuType, i, inventory, containerLevelAccess, itemCombinerMenuSlotDefinition);
     }
 
     @Inject(at = @At("TAIL"), method = "createResult()V", cancellable = true)

@@ -2,23 +2,22 @@ package com.daqem.itemrestrictions.data;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
 import com.daqem.itemrestrictions.ItemRestrictionsExpectPlatform;
-import com.daqem.itemrestrictions.config.ItemRestrictionsConfig;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class ItemRestrictionManager extends SimpleJsonResourceReloadListener {
+public class ItemRestrictionManager extends SimplePreparableReloadListener<List<ItemRestriction>> {
 
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping()
             .registerTypeHierarchyAdapter(ItemRestriction.class, new ItemRestriction.Serializer())
@@ -29,31 +28,53 @@ public abstract class ItemRestrictionManager extends SimpleJsonResourceReloadLis
     private static ItemRestrictionManager instance;
 
     public ItemRestrictionManager() {
-        super(GSON, "itemrestrictions/restrictions");
         instance = this;
     }
 
     @Override
-    protected void apply(@NotNull Map<ResourceLocation, JsonElement> map, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
-        Map<ResourceLocation, ItemRestriction> tempItemRestrictions = new HashMap<>();
+    protected @NotNull List<ItemRestriction> prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+        Map<ResourceLocation, Resource> resourceMap = resourceManager.listResources("itemrestrictions/restrictions", (resourceLocation) -> resourceLocation.getPath().endsWith(".json"));
+        Map<ResourceLocation, JsonObject> map = new HashMap<>();
+        for (Map.Entry<ResourceLocation, Resource> entry : resourceMap.entrySet()) {
+            ResourceLocation location = entry.getKey();
+            try {
+                JsonObject jsonElement = GsonHelper.parse(entry.getValue().openAsReader());
+                map.put(location, jsonElement);
+            }
+            catch (Exception runtimeException) {
+                ItemRestrictions.LOGGER.error("Parsing error loading item restriction {}", location, runtimeException);
+            }
+        }
+        List<ItemRestriction> itemRestrictions = new ArrayList<>();
 
         if (!ItemRestrictions.isDebugEnvironment()) {
             map.entrySet().removeIf(entry -> entry.getKey().getNamespace().equals("debug"));
         }
 
-        map.forEach((location, jsonElement) -> {
+        for (Map.Entry<ResourceLocation, JsonObject> entry : map.entrySet()) {
+            ResourceLocation location = entry.getKey();
+            JsonObject jsonObject = entry.getValue();
+            jsonObject.addProperty("location", location.toString());
             try {
-                JsonObject jsonObject = jsonElement.getAsJsonObject();
-                jsonObject.addProperty("location", location.toString());
-                ItemRestriction itemRestriction = GSON.fromJson(jsonObject, ItemRestriction.class);
-                tempItemRestrictions.put(location, itemRestriction);
-            } catch (Exception e) {
-                ItemRestrictions.LOGGER.error("Could not deserialize item restriction {} because: {}", location.toString(), e.getMessage());
+                ItemRestriction itemRestriction = GSON.fromJson(entry.getValue(), ItemRestriction.class);
+                itemRestrictions.add(itemRestriction);
             }
-        });
+            catch (JsonParseException | IllegalArgumentException runtimeException) {
+                ItemRestrictions.LOGGER.error("Parsing error loading item restriction {}", location, runtimeException);
+            }
+        }
 
-        ItemRestrictions.LOGGER.info("Loaded {} item restrictions", tempItemRestrictions.size());
-        this.itemRestrictions = ImmutableMap.copyOf(tempItemRestrictions);
+        return itemRestrictions;
+    }
+
+    @Override
+    protected void apply(List<ItemRestriction> object, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+        ItemRestrictions.LOGGER.info("Loaded {} item restrictions", object.size());
+        this.itemRestrictions = object.stream()
+                .collect(ImmutableMap.toImmutableMap(
+                        ItemRestriction::getLocation,
+                        itemRestriction -> itemRestriction
+                ));
     }
 
     public static ItemRestrictionManager getInstance() {
