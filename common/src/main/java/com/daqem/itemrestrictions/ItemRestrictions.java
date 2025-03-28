@@ -2,12 +2,15 @@ package com.daqem.itemrestrictions;
 
 import com.daqem.arc.registry.ArcRegistry;
 import com.daqem.itemrestrictions.config.ItemRestrictionsConfig;
+import com.daqem.itemrestrictions.data.ItemRestrictionManager;
 import com.daqem.itemrestrictions.event.ArcEvents;
 import com.daqem.itemrestrictions.networking.ItemRestrictionsNetworking;
 import com.mojang.logging.LogUtils;
+import dev.architectury.registry.ReloadListenerRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 import org.slf4j.Logger;
 
 public class ItemRestrictions {
@@ -19,6 +22,7 @@ public class ItemRestrictions {
         registerEvents();
         initRegistry();
         initNetworking();
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new ItemRestrictionManager(), getId(MOD_ID));
     }
 
     private static void initNetworking() {

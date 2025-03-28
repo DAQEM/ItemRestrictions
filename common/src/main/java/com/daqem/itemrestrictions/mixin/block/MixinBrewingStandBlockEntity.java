@@ -16,10 +16,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.WorldlyContainer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.BrewingStandMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BrewingStandBlock;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
@@ -33,7 +30,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Arrays;
 import java.util.UUID;
@@ -74,9 +70,8 @@ public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEnt
 
     @Inject(at = @At("TAIL"), method = "loadAdditional")
     private void load(CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfo ci) {
-        if (compoundTag.contains("ItemRestrictionsServerPlayer")) {
-            itemrestrictions$setPlayerUUID(UUID.fromString(compoundTag.getString("ItemRestrictionsServerPlayer")));
-        }
+        compoundTag.getString("ItemRestrictionsServerPlayer").ifPresent(uuid ->
+                itemrestrictions$setPlayerUUID(UUID.fromString(uuid)));
     }
 
     @Inject(at = @At(value = "HEAD"), method = "serverTick(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BrewingStandBlockEntity;)V", cancellable = true)

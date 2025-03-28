@@ -4,14 +4,13 @@ import com.daqem.arc.api.action.data.ActionDataBuilder;
 import com.daqem.arc.api.action.data.type.ActionDataType;
 import com.daqem.arc.api.player.ArcPlayer;
 import com.daqem.itemrestrictions.ItemRestrictions;
-import com.daqem.itemrestrictions.data.ItemRestrictionManager;
 import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,8 +28,8 @@ public abstract class MixinItemStack {
     @Shadow
     public abstract Item getItem();
 
-    @Inject(at = @At("HEAD"), method = "use(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResultHolder;", cancellable = true)
-    private void use(Level level, Player player, InteractionHand interactionHand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
+    @Inject(at = @At("HEAD"), method = "use", cancellable = true)
+    private void use(Level level, Player player, InteractionHand interactionHand, CallbackInfoReturnable<InteractionResult> cir) {
         if (player instanceof ServerPlayer serverPlayer) {
             if (player instanceof ItemRestrictionsServerPlayer itemRestrictionsPlayer) {
                 if (player instanceof ArcPlayer arcPlayer) {
@@ -40,7 +39,7 @@ public abstract class MixinItemStack {
                     if (craftingResult.isRestricted(RestrictionType.USE_ITEM)) {
                         serverPlayer.sendSystemMessage(ItemRestrictions.translatable(RestrictionType.USE_ITEM.getTranslationKey()).withStyle(ChatFormatting.RED), true);
                         serverPlayer.inventoryMenu.sendAllDataToRemote();
-                        cir.setReturnValue(InteractionResultHolder.fail(jobsplus$getItemStack()));
+                        cir.setReturnValue(InteractionResult.FAIL);
                         cir.cancel();
                     }
                 }
