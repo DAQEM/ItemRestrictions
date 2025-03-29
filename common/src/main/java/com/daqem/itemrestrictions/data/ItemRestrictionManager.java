@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ItemRestrictionManager extends SimplePreparableReloadListener<List<ItemRestriction>> {
 
@@ -33,7 +34,16 @@ public class ItemRestrictionManager extends SimplePreparableReloadListener<List<
 
     @Override
     protected @NotNull List<ItemRestriction> prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
-        Map<ResourceLocation, Resource> resourceMap = resourceManager.listResources("itemrestrictions/restrictions", (resourceLocation) -> resourceLocation.getPath().endsWith(".json"));
+        Map<ResourceLocation, Resource> resourceMap = resourceManager.listResources("itemrestrictions/restrictions", (resourceLocation) ->
+                        resourceLocation.getPath().endsWith(".json")).entrySet().stream()
+                .collect(Collectors.toMap(entry ->
+                                ResourceLocation.fromNamespaceAndPath(
+                                        entry.getKey().getNamespace(),
+                                        entry.getKey().getPath()
+                                                .substring(0, entry.getKey().getPath().length() - ".json".length())
+                                                .substring("itemrestrictions/restrictions/".length())),
+                        Map.Entry::getValue));
+
         Map<ResourceLocation, JsonObject> map = new HashMap<>();
         for (Map.Entry<ResourceLocation, Resource> entry : resourceMap.entrySet()) {
             ResourceLocation location = entry.getKey();
