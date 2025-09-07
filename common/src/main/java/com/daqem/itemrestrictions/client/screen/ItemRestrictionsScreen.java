@@ -14,6 +14,6 @@ public interface ItemRestrictionsScreen {
 
     default void renderCantCraftMessage(GuiGraphics guiGraphics, Font font, int width, int height, int imageHeight, RestrictionType restrictionType) {
         MutableComponent component = ItemRestrictions.translatable(restrictionType.getTranslationKey()).withStyle(ChatFormatting.RED);
-        guiGraphics.drawString(font, component, (int) ((width / 2F) - (font.width(component) / 2F)), (int) ((height - imageHeight) / 4F), 0xFFFFFF);
+        guiGraphics.drawString(font, component, (int) ((width / 2F) - (font.width(component) / 2F)), (int) ((height - imageHeight) / 4F), 0xFFFFFFFF);
     }
 }

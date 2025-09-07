@@ -26,6 +26,8 @@ import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -70,21 +72,21 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
     }
 
     @Inject(at = @At("TAIL"), method = "saveAdditional")
-    private void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfo ci) {
+    private void saveAdditional(ValueOutput valueOutput, CallbackInfo ci) {
         ServerPlayer serverPlayer = itemrestrictions$getPlayer();
         if (serverPlayer != null) {
-            compoundTag.putString("ItemRestrictionsServerPlayer", serverPlayer.getUUID().toString());
+            valueOutput.putString("ItemRestrictionsServerPlayer", serverPlayer.getUUID().toString());
         } else {
             UUID uuid = itemrestrictions$getPlayerUUID();
             if (uuid != null) {
-                compoundTag.putString("ItemRestrictionsServerPlayer", uuid.toString());
+                valueOutput.putString("ItemRestrictionsServerPlayer", uuid.toString());
             }
         }
     }
 
     @Inject(at = @At("TAIL"), method = "loadAdditional")
-    private void load(CompoundTag compoundTag, HolderLookup.Provider provider, CallbackInfo ci) {
-        compoundTag.getString("ItemRestrictionsServerPlayer").ifPresent(uuid ->
+    private void load(ValueInput valueInput, CallbackInfo ci) {
+        valueInput.getString("ItemRestrictionsServerPlayer").ifPresent(uuid ->
                 itemrestrictions$setPlayerUUID(UUID.fromString(uuid)));
     }
 
