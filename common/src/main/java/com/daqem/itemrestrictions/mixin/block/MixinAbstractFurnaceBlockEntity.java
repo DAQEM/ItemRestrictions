@@ -107,10 +107,10 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
                         RestrictionResult result = new RestrictionResult();
 
                         if (block.itemrestrictions$getPlayer() instanceof ItemRestrictionsServerPlayer player) {
-                            if (player instanceof ArcPlayer arcPlayer && ((ServerPlayer) player).getServer() != null) {
+                            if (player instanceof ArcPlayer arcPlayer) {
                                 result = player.itemrestrictions$isRestricted(
                                         new ActionDataBuilder(arcPlayer, null)
-                                                .withData(ActionDataType.ITEM_STACK, recipe.assemble(null, ((ServerPlayer) player).getServer().registryAccess()))
+                                                .withData(ActionDataType.ITEM_STACK, recipe.assemble(null, ((ServerPlayer) player).level().getServer().registryAccess()))
                                                 .build());
                             }
                         }
@@ -202,7 +202,7 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
     @Override
     @Nullable
     public RecipeHolder<?> itemrestrictions$getRecipe() {
-        if (getLevel() == null || getLevel().isClientSide) return null;
+        if (getLevel() == null || getLevel().isClientSide()) return null;
         if (getItem(0).isEmpty()) return null;
         if (getItem(1).isEmpty()) return null;
         if (itemrestrictions$getQuickCheck() == null) return null;

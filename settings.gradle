@@ -18,4 +18,4 @@ include("fabric")
 //include("forge")
 include("neoforge")
 
-rootProject.name = "Item Restrictions 1.21.6"
+rootProject.name = "Item Restrictions 1.21.9"
