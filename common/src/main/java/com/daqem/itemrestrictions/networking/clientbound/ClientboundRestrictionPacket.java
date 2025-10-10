@@ -46,17 +46,7 @@ public class ClientboundRestrictionPacket implements CustomPacketPayload {
         return ItemRestrictionsNetworking.CLIENTBOUND_RESTRICTION_TYPE;
     }
 
-    @Environment(EnvType.CLIENT)
-    public static void handleClientSide(ClientboundRestrictionPacket packet, NetworkManager.PacketContext context) {
-        if (ItemRestrictions.isDebugEnvironment()) {
-            ItemRestrictions.LOGGER.error("Received restriction packet from server! Restriction type: " + packet.restrictionType);
-            ItemRestrictions.LOGGER.info("Amount of item restrictions on the client: " + ItemRestrictionManager.getInstance().getItemRestrictions().size());
-        }
-        if (context.getPlayer() instanceof LocalPlayer) {
-            Screen currentScreen = Minecraft.getInstance().screen;
-            if (currentScreen instanceof ItemRestrictionsScreen itemRestrictionsScreen) {
-                itemRestrictionsScreen.itemrestrictions$cantCraft(packet.restrictionType);
-            }
-        }
+    public RestrictionType getRestrictionType() {
+        return restrictionType;
     }
 }

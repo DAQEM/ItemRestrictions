@@ -44,10 +44,7 @@ public class ClientboundUpdateItemRestrictionsPacket implements CustomPacketPayl
         return ItemRestrictionsNetworking.CLIENTBOUND_UPDATE_ITEM_RESTRICTIONS_PACKET;
     }
 
-    @Environment(EnvType.CLIENT)
-    public static void handleClientSide(ClientboundUpdateItemRestrictionsPacket packet, NetworkManager.PacketContext context) {
-        if (!Minecraft.getInstance().isLocalServer()) {
-            ItemRestrictionManager.getInstance().setItemRestrictions(packet.itemRestrictions);
-        }
+    public List<ItemRestriction> getItemRestrictions() {
+        return itemRestrictions;
     }
 }
