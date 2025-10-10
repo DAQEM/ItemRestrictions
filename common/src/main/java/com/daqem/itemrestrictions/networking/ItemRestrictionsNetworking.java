@@ -1,6 +1,8 @@
 package com.daqem.itemrestrictions.networking;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
+import com.daqem.itemrestrictions.client.networking.ClientboundRestrictionPacketHandler;
+import com.daqem.itemrestrictions.client.networking.ClientboundUpdateItemRestrictionsPacketHandler;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundUpdateItemRestrictionsPacket;
 import dev.architectury.networking.NetworkManager;
@@ -14,8 +16,8 @@ public interface ItemRestrictionsNetworking {
     CustomPacketPayload.Type<ClientboundUpdateItemRestrictionsPacket> CLIENTBOUND_UPDATE_ITEM_RESTRICTIONS_PACKET = new CustomPacketPayload.Type<>(ItemRestrictions.getId("clientbound_update_item_restrictions"));
 
     static void initClient() {
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, CLIENTBOUND_RESTRICTION_TYPE, ClientboundRestrictionPacket.STREAM_CODEC, ClientboundRestrictionPacket::handleClientSide);
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, CLIENTBOUND_UPDATE_ITEM_RESTRICTIONS_PACKET, ClientboundUpdateItemRestrictionsPacket.STREAM_CODEC, ClientboundUpdateItemRestrictionsPacket::handleClientSide);
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, CLIENTBOUND_RESTRICTION_TYPE, ClientboundRestrictionPacket.STREAM_CODEC, ClientboundRestrictionPacketHandler::handleClientSide);
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, CLIENTBOUND_UPDATE_ITEM_RESTRICTIONS_PACKET, ClientboundUpdateItemRestrictionsPacket.STREAM_CODEC, ClientboundUpdateItemRestrictionsPacketHandler::handleClientSide);
     }
 
     static void initServer() {
