@@ -1,0 +1,18 @@
+{
+  "itemrestrictions.inventory.cant_craft": "你还不能制作此物品。",
+  "itemrestrictions.inventory.cant_smelt": "你还不能熔炼此物品。",
+  "itemrestrictions.inventory.cant_brew": "你还不能酿造此物品。",
+  "itemrestrictions.inventory.cant_enchant": "你还不能附魔此物品。",
+  "itemrestrictions.inventory.cant_repair": "你还不能修复此物品。",
+  "itemrestrictions.inventory.cant_use_item": "你还不能使用此物品。",
+  "itemrestrictions.inventory.cant_break_block": "你还不能破坏此方块。",
+  "itemrestrictions.inventory.cant_item_break_block": "你还不能用此物品破坏此方块。",
+  "itemrestrictions.inventory.cant_place_block": "你还不能放置此方块。",
+  "itemrestrictions.inventory.cant_hurt_entity": "你还不能用此物品造成伤害。",
+  "itemrestrictions.inventory.interact_entity": "你还不能与此实体互动。",
+  "itemrestrictions.inventory.interact_block": "你还不能与此方块互动。",
+  "yamlconfig.itemrestrictions": "物品限制",
+  "yamlconfig.itemrestrictions.item-restrictions-common": "通用",
+  "yamlconfig.itemrestrictions.item-restrictions-common.debug": "调试",
+  "yamlconfig.itemrestrictions.item-restrictions-common.debug.is_debug": "调试已启用"
+}

@@ -1,0 +1,18 @@
+{
+  "itemrestrictions.inventory.cant_craft": "Du kannst diesen Gegenstand noch nicht herstellen.",
+  "itemrestrictions.inventory.cant_smelt": "Du kannst diesen Gegenstand noch nicht schmelzen.",
+  "itemrestrictions.inventory.cant_brew": "Du kannst diesen Trank noch nicht brauen.",
+  "itemrestrictions.inventory.cant_enchant": "Du kannst diesen Gegenstand noch nicht verzaubern.",
+  "itemrestrictions.inventory.cant_repair": "Du kannst diesen Gegenstand noch nicht reparieren.",
+  "itemrestrictions.inventory.cant_use_item": "Du kannst diesen Gegenstand noch nicht benutzen.",
+  "itemrestrictions.inventory.cant_break_block": "Du kannst diesen Block noch nicht abbauen.",
+  "itemrestrictions.inventory.cant_item_break_block": "Du kannst diesen Block mit diesem Gegenstand noch nicht abbauen.",
+  "itemrestrictions.inventory.cant_place_block": "Du kannst diesen Block noch nicht platzieren.",
+  "itemrestrictions.inventory.cant_hurt_entity": "Du kannst mit diesem Gegenstand noch keinen Schaden zufügen.",
+  "itemrestrictions.inventory.interact_entity": "Du kannst mit dieser Entität noch nicht interagieren.",
+  "itemrestrictions.inventory.interact_block": "Du kannst mit diesem Block noch nicht interagieren.",
+  "yamlconfig.itemrestrictions": "Gegenstands-Beschränkungen",
+  "yamlconfig.itemrestrictions.item-restrictions-common": "Allgemein",
+  "yamlconfig.itemrestrictions.item-restrictions-common.debug": "Debug",
+  "yamlconfig.itemrestrictions.item-restrictions-common.debug.is_debug": "Debug aktiviert"
+}

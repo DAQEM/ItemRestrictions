@@ -1,0 +1,18 @@
+{
+  "itemrestrictions.inventory.cant_craft": "Aún no puedes fabricar este objeto.",
+  "itemrestrictions.inventory.cant_smelt": "Aún no puedes fundir este objeto.",
+  "itemrestrictions.inventory.cant_brew": "Aún no puedes preparar esta poción.",
+  "itemrestrictions.inventory.cant_enchant": "Aún no puedes encantar este objeto.",
+  "itemrestrictions.inventory.cant_repair": "Aún no puedes reparar este objeto.",
+  "itemrestrictions.inventory.cant_use_item": "Aún no puedes usar este objeto.",
+  "itemrestrictions.inventory.cant_break_block": "Aún no puedes romper este bloque.",
+  "itemrestrictions.inventory.cant_item_break_block": "Aún no puedes romper este bloque con este objeto.",
+  "itemrestrictions.inventory.cant_place_block": "Aún no puedes colocar este bloque.",
+  "itemrestrictions.inventory.cant_hurt_entity": "Aún no puedes hacer daño con este objeto.",
+  "itemrestrictions.inventory.interact_entity": "Aún no puedes interactuar con esta entidad.",
+  "itemrestrictions.inventory.interact_block": "Aún no puedes interactuar con este bloque.",
+  "yamlconfig.itemrestrictions": "Restricciones de Objetos",
+  "yamlconfig.itemrestrictions.item-restrictions-common": "Común",
+  "yamlconfig.itemrestrictions.item-restrictions-common.debug": "Depuración",
+  "yamlconfig.itemrestrictions.item-restrictions-common.debug.is_debug": "Depuración activada"
+}
