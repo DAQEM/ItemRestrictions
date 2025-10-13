@@ -1,0 +1,13 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "Apache-2.0"
+
+[[mods]]
+modId = "itemrestrictions_test"
+version = "${file.jarVersion}"
+displayName = "Item Restrictions Test Mod"
+authors = "DAQEM"
+description = '''
+A test mod for Item Restrictions.
+'''
+license = "Apache-2.0"

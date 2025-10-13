@@ -1,11 +1,11 @@
 package com.daqem.itemrestrictions.mixin.menu;
 
 import com.daqem.arc.api.action.data.ActionDataBuilder;
-import com.daqem.arc.api.action.data.type.ActionDataType;
+import com.daqem.arc.api.action.data.IActionDataType;
 import com.daqem.arc.api.player.ArcPlayer;
 import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
-import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
+import com.daqem.itemrestrictions.level.player.ItemRestrictionsPlayer;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.server.level.ServerPlayer;
@@ -63,11 +63,13 @@ public abstract class MixinGrindStoneMenu extends AbstractContainerMenu {
             if (!this.repairSlots.getItem(0).isEmpty() && !this.repairSlots.getItem(1).isEmpty()) {
                 ItemStack resultSlotItem = this.resultSlots.getItem(0);
                 if (!resultSlotItem.isEmpty()) {
-                    if (this.itemrestrictions$player instanceof ItemRestrictionsServerPlayer itemRestrictionsPlayer) {
+                    if (this.itemrestrictions$player instanceof ItemRestrictionsPlayer itemRestrictionsPlayer) {
                         if (this.itemrestrictions$player instanceof ArcPlayer arcPlayer) {
                             RestrictionResult result = itemRestrictionsPlayer.itemrestrictions$isRestricted(
                                     new ActionDataBuilder(arcPlayer, null)
-                                            .withData(ActionDataType.ITEM_STACK, resultSlotItem)
+                                            .withData(IActionDataType.ITEM_STACK, resultSlotItem)
+                                            .withData(IActionDataType.ITEM, resultSlotItem.getItem())
+                                            .withData(IActionDataType.WORLD, this.itemrestrictions$player.level())
                                             .build());
                             if (result.isRestricted(RestrictionType.REPAIR)) {
                                 this.getSlot(2).set(ItemStack.EMPTY);

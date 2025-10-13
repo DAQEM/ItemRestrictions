@@ -1,9 +1,9 @@
 package com.daqem.itemrestrictions.data;
 
-import com.daqem.arc.api.action.data.ActionData;
-import com.daqem.arc.api.action.data.type.ActionDataType;
+import com.daqem.arc.api.action.data.IActionDataType;
 import com.daqem.arc.api.condition.ICondition;
-import com.daqem.arc.api.condition.serializer.IConditionSerializer;
+import com.daqem.arc.api.condition.IConditionSerializer;
+import com.daqem.arc.data.ActionData;
 import com.daqem.arc.data.serializer.ArcSerializer;
 import com.daqem.arc.registry.ArcRegistry;
 import com.daqem.itemrestrictions.ItemRestrictions;
@@ -33,7 +33,7 @@ public class ItemRestriction {
     }
 
     public RestrictionResult isRestricted(ActionData actionData) {
-        ItemStack itemStack = actionData.getData(ActionDataType.ITEM_STACK);
+        ItemStack itemStack = actionData.getData(IActionDataType.ITEM_STACK);
 
         if (itemStack == null) {
             return new RestrictionResult();
@@ -63,11 +63,7 @@ public class ItemRestriction {
 
             List<RestrictionType> restrictionTypes = new ArrayList<>();
             List<ICondition> conditions = new ArrayList<>();
-
-            ItemStack iconStack = ItemStack.EMPTY;
-            if (jsonObject.has("icon")) {
-                iconStack = getItemStack(jsonObject.getAsJsonObject("icon"));
-            }
+            ItemStack iconStack = getItemStack(jsonObject, "icon", ItemStack.EMPTY);
 
             restrictionTypesArray.forEach(jsonElement -> {
                 String restrictionTypeString = jsonElement.getAsString();

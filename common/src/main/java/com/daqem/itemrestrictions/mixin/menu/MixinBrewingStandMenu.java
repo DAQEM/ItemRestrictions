@@ -13,7 +13,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(BrewingStandMenu.class)
 public abstract class MixinBrewingStandMenu extends AbstractContainerMenu implements ItemRestrictionsBrewingStandMenu {
 
-    @Shadow @Final public Container brewingStand;
+    @Shadow @Final
+    private Container brewingStand;
 
     protected MixinBrewingStandMenu(@Nullable MenuType<?> menuType, int i) {
         super(menuType, i);

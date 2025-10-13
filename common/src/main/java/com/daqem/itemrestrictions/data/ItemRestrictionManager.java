@@ -1,7 +1,6 @@
 package com.daqem.itemrestrictions.data;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
-import com.daqem.itemrestrictions.ItemRestrictionsExpectPlatform;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
 import net.minecraft.resources.ResourceLocation;
@@ -88,7 +87,7 @@ public class ItemRestrictionManager extends SimplePreparableReloadListener<List<
     }
 
     public static ItemRestrictionManager getInstance() {
-        return instance != null ? instance : ItemRestrictionsExpectPlatform.getItemRestrictionManager();
+        return instance != null ? instance : new ItemRestrictionManager();
     }
 
     public List<ItemRestriction> getItemRestrictions() {

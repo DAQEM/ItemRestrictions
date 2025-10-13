@@ -1,19 +1,17 @@
 package com.daqem.itemrestrictions.mixin.block;
 
 import com.daqem.arc.api.action.data.ActionDataBuilder;
-import com.daqem.arc.api.action.data.type.ActionDataType;
+import com.daqem.arc.api.action.data.IActionDataType;
 import com.daqem.arc.api.player.ArcPlayer;
 import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.level.block.ItemRestrictionsBrewingStandBlockEntity;
 import com.daqem.itemrestrictions.level.menu.ItemRestrictionsBrewingStandMenu;
-import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
+import com.daqem.itemrestrictions.level.player.ItemRestrictionsPlayer;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.item.ItemStack;
@@ -93,11 +91,15 @@ public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEnt
 
                         RestrictionResult result = new RestrictionResult();
 
-                        if (block.itemrestrictions$getPlayer() instanceof ItemRestrictionsServerPlayer player) {
+                        if (block.itemrestrictions$getPlayer() instanceof ItemRestrictionsPlayer player) {
                             if (player instanceof ArcPlayer arcPlayer) {
                                 result = player.itemrestrictions$isRestricted(
                                         new ActionDataBuilder(arcPlayer, null)
-                                                .withData(ActionDataType.ITEM_STACK, mixedPotion)
+                                                .withData(IActionDataType.ITEM_STACK, mixedPotion)
+                                                .withData(IActionDataType.ITEM, mixedPotion.getItem())
+                                                .withData(IActionDataType.WORLD, level)
+                                                .withData(IActionDataType.BLOCK_STATE, blockState)
+                                                .withData(IActionDataType.BLOCK_POSITION, blockPos)
                                                 .build());
                             }
                         }

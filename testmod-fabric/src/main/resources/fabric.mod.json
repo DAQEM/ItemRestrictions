@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "itemrestrictions_test",
+  "version": "${version}",
+  "name": "Item Restrictions Test Mod",
+  "description": "A test mod for Item Restrictions.",
+  "authors": [
+    "DAQEM"
+  ],
+  "license": "Apache-2.0",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.daqem.itemrestrictions.test.TestMod::init"
+    ]
+  }
+}

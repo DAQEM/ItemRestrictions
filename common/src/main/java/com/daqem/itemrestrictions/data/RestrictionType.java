@@ -1,7 +1,6 @@
 package com.daqem.itemrestrictions.data;
 
 public enum RestrictionType {
-
     CRAFT("inventory.cant_craft"),
     SMELT("inventory.cant_smelt"),
     BREW("inventory.cant_brew"),
@@ -12,6 +11,8 @@ public enum RestrictionType {
     ITEM_BREAK_BLOCK("inventory.cant_item_break_block"),
     PLACE_BLOCK("inventory.cant_place_block"),
     HURT_ENTITY("inventory.cant_hurt_entity"),
+    INTERACT_ENTITY("inventory.cant_interact_entity"),
+    INTERACT_BLOCK("inventory.cant_interact_block"),
     NONE("");
 
     private final String translationKey;

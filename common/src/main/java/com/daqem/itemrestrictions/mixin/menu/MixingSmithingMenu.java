@@ -1,11 +1,11 @@
 package com.daqem.itemrestrictions.mixin.menu;
 
 import com.daqem.arc.api.action.data.ActionDataBuilder;
-import com.daqem.arc.api.action.data.type.ActionDataType;
+import com.daqem.arc.api.action.data.IActionDataType;
 import com.daqem.arc.api.player.ArcPlayer;
 import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
-import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
+import com.daqem.itemrestrictions.level.player.ItemRestrictionsPlayer;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,11 +28,14 @@ public abstract class MixingSmithingMenu extends ItemCombinerMenu {
     @Inject(at = @At("TAIL"), method = "createResult()V", cancellable = true)
     private void createResult(CallbackInfo ci) {
         if (this.player instanceof ServerPlayer serverPlayer) {
-            if (serverPlayer instanceof ItemRestrictionsServerPlayer itemRestrictionsPlayer) {
+            if (serverPlayer instanceof ItemRestrictionsPlayer itemRestrictionsPlayer) {
                 if (serverPlayer instanceof ArcPlayer arcPlayer) {
                     if (!this.inputSlots.getItem(0).isEmpty() && !this.inputSlots.getItem(1).isEmpty()) {
+                        ItemStack stack = this.resultSlots.getItem(0);
                         RestrictionResult restrictionResult = itemRestrictionsPlayer.itemrestrictions$isRestricted(new ActionDataBuilder(arcPlayer, null)
-                                .withData(ActionDataType.ITEM_STACK, this.resultSlots.getItem(0))
+                                .withData(IActionDataType.ITEM_STACK, stack)
+                                .withData(IActionDataType.ITEM, stack.getItem())
+                                .withData(IActionDataType.WORLD, serverPlayer.level())
                                 .build());
                         if (restrictionResult.isRestricted(RestrictionType.CRAFT)) {
                             this.resultSlots.setItem(0, ItemStack.EMPTY);

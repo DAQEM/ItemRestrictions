@@ -8,11 +8,10 @@
   ],
   "mixins": [
     "MixinPlayerList",
-    "MixinServerPlayer",
+    "MixinPlayer",
     "block.MixinAbstractFurnaceBlockEntity",
     "block.MixinBaseContainerBlockEntity",
     "block.MixinBrewingStandBlockEntity",
-    "item.MixinItemStack",
     "menu.MixinAbstractFurnaceMenu",
     "menu.MixinAnvilMenu",
     "menu.MixinBrewingStandMenu",

@@ -1,19 +1,17 @@
 package com.daqem.itemrestrictions.mixin.block;
 
 import com.daqem.arc.api.action.data.ActionDataBuilder;
-import com.daqem.arc.api.action.data.type.ActionDataType;
+import com.daqem.arc.api.action.data.IActionDataType;
 import com.daqem.arc.api.player.ArcPlayer;
 import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.level.block.ItemRestrictionsFurnaceBlockEntity;
 import com.daqem.itemrestrictions.level.menu.ItemRestrictionsAbstractFurnaceMenu;
-import com.daqem.itemrestrictions.level.player.ItemRestrictionsServerPlayer;
+import com.daqem.itemrestrictions.level.player.ItemRestrictionsPlayer;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.WorldlyContainer;
@@ -106,11 +104,16 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
                         Recipe<?> recipe = recipeHolder.value();
                         RestrictionResult result = new RestrictionResult();
 
-                        if (block.itemrestrictions$getPlayer() instanceof ItemRestrictionsServerPlayer player) {
+                        if (block.itemrestrictions$getPlayer() instanceof ItemRestrictionsPlayer player) {
                             if (player instanceof ArcPlayer arcPlayer) {
+                                ItemStack resultStack = recipe.assemble(null, ((ServerPlayer) player).level().getServer().registryAccess());
                                 result = player.itemrestrictions$isRestricted(
                                         new ActionDataBuilder(arcPlayer, null)
-                                                .withData(ActionDataType.ITEM_STACK, recipe.assemble(null, ((ServerPlayer) player).level().getServer().registryAccess()))
+                                                .withData(IActionDataType.ITEM_STACK, resultStack)
+                                                .withData(IActionDataType.ITEM, resultStack.getItem())
+                                                .withData(IActionDataType.WORLD, serverLevel)
+                                                .withData(IActionDataType.BLOCK_STATE, blockState)
+                                                .withData(IActionDataType.BLOCK_POSITION, blockPos)
                                                 .build());
                             }
                         }

@@ -1,0 +1,49 @@
+{
+  "icon": {
+    "id": "minecraft:potion",
+    "count": 1,
+    "components": {
+      "minecraft:potion_contents": {
+        "potion": "minecraft:swiftness"
+      }
+    }
+  },
+  "types": [
+    "craft",
+    "smelt",
+    "enchant",
+    "repair",
+    "use_item",
+    "break_block",
+    "item_break_block",
+    "place_block",
+    "hurt_entity",
+    "interact_entity",
+    "interact_block"
+  ],
+  "conditions": [
+    {
+      "type": "arc:or",
+      "conditions": [
+        {
+          "type": "arc:items",
+          "items": [
+            "minecraft:stone",
+            "minecraft:stone_bricks",
+            "minecraft:egg",
+            "minecraft:cooked_beef",
+            "minecraft:diamond_sword"
+          ]
+        },
+        {
+          "type": "arc:block",
+          "block": "minecraft:furnace"
+        },
+        {
+            "type": "arc:entity_type",
+            "entity_type": "minecraft:cow"
+        }
+      ]
+    }
+  ]
+}

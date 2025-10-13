@@ -17,9 +17,6 @@
   "entrypoints": {
     "main": [
       "com.daqem.itemrestrictions.fabric.ItemRestrictionsFabric"
-    ],
-    "client": [
-      "com.daqem.itemrestrictions.fabric.client.ItemRestrictionsFabricClient"
     ]
   },
   "mixins": [
