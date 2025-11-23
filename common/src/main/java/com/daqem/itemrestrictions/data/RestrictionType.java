@@ -1,18 +1,18 @@
 package com.daqem.itemrestrictions.data;
 
 public enum RestrictionType {
-    CRAFT("inventory.cant_craft"),
-    SMELT("inventory.cant_smelt"),
-    BREW("inventory.cant_brew"),
-    ENCHANT("inventory.cant_enchant"),
-    REPAIR("inventory.cant_repair"),
-    USE_ITEM("inventory.cant_use_item"),
-    BREAK_BLOCK("inventory.cant_break_block"),
-    ITEM_BREAK_BLOCK("inventory.cant_item_break_block"),
-    PLACE_BLOCK("inventory.cant_place_block"),
-    HURT_ENTITY("inventory.cant_hurt_entity"),
-    INTERACT_ENTITY("inventory.cant_interact_entity"),
-    INTERACT_BLOCK("inventory.cant_interact_block"),
+    CRAFT("cant_craft"),
+    SMELT("cant_smelt"),
+    BREW("cant_brew"),
+    ENCHANT("cant_enchant"),
+    REPAIR("cant_repair"),
+    USE_ITEM("cant_use_item"),
+    BREAK_BLOCK("cant_break_block"),
+    ITEM_BREAK_BLOCK("cant_item_break_block"),
+    PLACE_BLOCK("cant_place_block"),
+    HURT_ENTITY("cant_hurt_entity"),
+    INTERACT_ENTITY("cant_interact_entity"),
+    INTERACT_BLOCK("cant_interact_block"),
     NONE("");
 
     private final String translationKey;
@@ -22,6 +22,10 @@ public enum RestrictionType {
     }
 
     public String getTranslationKey() {
-        return translationKey;
+        return "inventory." + translationKey;
+    }
+
+    public String getGuiTranslationKey() {
+        return "gui." + translationKey;
     }
 }
