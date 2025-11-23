@@ -13,6 +13,6 @@
   "itemrestrictions.inventory.interact_block": "You can't interact with this block yet.",
   "yamlconfig.itemrestrictions": "Item Restrictions",
   "yamlconfig.itemrestrictions.item-restrictions-common": "Common",
-  "yamlconfig.itemrestrictions.item-restrictions-common.debug": "Debug",
-  "yamlconfig.itemrestrictions.item-restrictions-common.debug.is_debug": "Debug Enabled"
+  "yamlconfig.itemrestrictions.item-restrictions-common.restrictions": "Restrictions",
+  "yamlconfig.itemrestrictions.item-restrictions-common.restrictions.excluded_restrictions": "Excluded Restrictions"
 }

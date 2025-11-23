@@ -1,6 +1,8 @@
 package com.daqem.itemrestrictions.data;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
+import com.daqem.itemrestrictions.config.ItemRestrictionsConfig;
+import com.daqem.yamlconfig.YamlConfigExpectPlatform;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
 import net.minecraft.resources.ResourceLocation;
@@ -11,11 +13,15 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.BufferedReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ItemRestrictionManager extends SimplePreparableReloadListener<List<ItemRestriction>> {
 
@@ -54,14 +60,49 @@ public class ItemRestrictionManager extends SimplePreparableReloadListener<List<
                 ItemRestrictions.LOGGER.error("Parsing error loading item restriction {}", location, runtimeException);
             }
         }
-        List<ItemRestriction> itemRestrictions = new ArrayList<>();
 
-        if (!ItemRestrictions.isDebugEnvironment()) {
-            map.entrySet().removeIf(entry -> entry.getKey().getNamespace().equals("debug"));
+        try {
+            Path configDir = YamlConfigExpectPlatform.getConfigDirectory().resolve(ItemRestrictions.MOD_ID).resolve("restrictions");
+            if (!Files.exists(configDir)) {
+                Files.createDirectories(configDir);
+            }
+            try (Stream<Path> paths = Files.walk(configDir)) {
+                paths.filter(path -> path.toString().endsWith(".json"))
+                        .forEach(path -> {
+                            try (BufferedReader reader = Files.newBufferedReader(path)) {
+                                JsonObject jsonElement = GsonHelper.parse(reader);
+                                String relativePath = configDir.relativize(path).toString();
+                                relativePath = relativePath.replace("\\", "/");
+                                relativePath = relativePath.substring(0, relativePath.length() - ".json".length());
+                                String namespace;
+                                String resourcePath;
+                                int firstSlashIndex = relativePath.indexOf('/');
+                                if (firstSlashIndex > 0) {
+                                    namespace = relativePath.substring(0, firstSlashIndex);
+                                    resourcePath = relativePath.substring(firstSlashIndex + 1);
+                                } else {
+                                    namespace = ItemRestrictions.MOD_ID;
+                                    resourcePath = relativePath;
+                                }
+                                ResourceLocation location = ResourceLocation.fromNamespaceAndPath(namespace, resourcePath);
+                                map.put(location, jsonElement);
+                            } catch (Exception e) {
+                                ItemRestrictions.LOGGER.error("Parsing error loading restriction from config {}", path, e);
+                            }
+                        });
+            }
+        } catch (Exception e) {
+            ItemRestrictions.LOGGER.error("Error loading restrictions from config", e);
         }
+        List<ItemRestriction> itemRestrictions = new ArrayList<>();
+        List<String> excludedRestrictions = ItemRestrictionsConfig.excludedRestrictions.get();
+
 
         for (Map.Entry<ResourceLocation, JsonObject> entry : map.entrySet()) {
             ResourceLocation location = entry.getKey();
+            if (excludedRestrictions.contains(location.toString())) {
+                continue;
+            }
             JsonObject jsonObject = entry.getValue();
             jsonObject.addProperty("location", location.toString());
             try {

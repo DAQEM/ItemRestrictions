@@ -13,6 +13,6 @@
   "itemrestrictions.inventory.interact_block": "Aún no puedes interactuar con este bloque.",
   "yamlconfig.itemrestrictions": "Restricciones de Objetos",
   "yamlconfig.itemrestrictions.item-restrictions-common": "Común",
-  "yamlconfig.itemrestrictions.item-restrictions-common.debug": "Depuración",
-  "yamlconfig.itemrestrictions.item-restrictions-common.debug.is_debug": "Depuración activada"
+  "yamlconfig.itemrestrictions.item-restrictions-common.restrictions": "Restricciones",
+  "yamlconfig.itemrestrictions.item-restrictions-common.restrictions.excluded_restrictions": "Restricciones Excluidas"
 }

@@ -13,6 +13,6 @@
   "itemrestrictions.inventory.interact_block": "你还不能与此方块互动。",
   "yamlconfig.itemrestrictions": "物品限制",
   "yamlconfig.itemrestrictions.item-restrictions-common": "通用",
-  "yamlconfig.itemrestrictions.item-restrictions-common.debug": "调试",
-  "yamlconfig.itemrestrictions.item-restrictions-common.debug.is_debug": "调试已启用"
+  "yamlconfig.itemrestrictions.item-restrictions-common.restrictions": "限制",
+  "yamlconfig.itemrestrictions.item-restrictions-common.restrictions.excluded_restrictions": "排除的限制"
 }

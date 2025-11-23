@@ -25,9 +25,6 @@ public abstract class MixinPlayerList {
     @Inject(at = @At("TAIL"), method = "reloadResources")
     private void reloadResources(CallbackInfo ci) {
         for (ServerPlayer player : this.players) {
-            if (ItemRestrictions.isDebugEnvironment()) {
-                ItemRestrictions.LOGGER.info("Sending item restrictions to player {}", player.getName().getString());
-            }
             NetworkManager.sendToPlayer(player, new ClientboundUpdateItemRestrictionsPacket(ItemRestrictionManager.getInstance().getItemRestrictions()));
         }
     }

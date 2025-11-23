@@ -1,29 +1,36 @@
 package com.daqem.itemrestrictions.config;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
+import com.daqem.yamlconfig.YamlConfigExpectPlatform;
 import com.daqem.yamlconfig.api.config.ConfigExtension;
 import com.daqem.yamlconfig.api.config.ConfigType;
 import com.daqem.yamlconfig.api.config.IConfigBuilder;
+import com.daqem.yamlconfig.api.config.entry.IConfigEntry;
 import com.daqem.yamlconfig.impl.config.ConfigBuilder;
 
-import java.util.function.Supplier;
+import java.util.List;
 
 public class ItemRestrictionsConfig {
 
-    public static final Supplier<Boolean> isDebug;
+    public static final IConfigEntry<List<String>> excludedRestrictions;
 
     static {
-        IConfigBuilder config = new ConfigBuilder(ItemRestrictions.MOD_ID, "item-restrictions-common", ConfigExtension.YAML, ConfigType.COMMON);
+        IConfigBuilder builder = new ConfigBuilder(
+                ItemRestrictions.MOD_ID,
+                "item-restrictions-common",
+                ConfigExtension.YAML,
+                ConfigType.COMMON,
+                YamlConfigExpectPlatform.getConfigDirectory().resolve(ItemRestrictions.MOD_ID)
+        );
 
-        config.push("debug");
-        isDebug = config.defineBoolean("is_debug", false)
-                .withComments("if true, debug mode is enabled");
-        config.pop();
+        builder.push("restrictions");
+        excludedRestrictions = builder.defineStringList("excluded_restrictions", List.of())
+                .withComments("A list of restriction IDs to exclude from the game. Example: ['<namespace>:<restriction_id>']");
+        builder.pop();
 
-        config.build();
+        builder.build();
     }
 
     public static void init() {
     }
-
 }

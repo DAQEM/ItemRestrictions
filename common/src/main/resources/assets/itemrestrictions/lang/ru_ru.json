@@ -13,6 +13,6 @@
   "itemrestrictions.inventory.interact_block": "Вы еще не можете взаимодействовать с этим блоком.",
   "yamlconfig.itemrestrictions": "Ограничения на предметы",
   "yamlconfig.itemrestrictions.item-restrictions-common": "Общие",
-  "yamlconfig.itemrestrictions.item-restrictions-common.debug": "Отладка",
-  "yamlconfig.itemrestrictions.item-restrictions-common.debug.is_debug": "Отладка включена"
+  "yamlconfig.itemrestrictions.item-restrictions-common.restrictions": "Ограничения",
+  "yamlconfig.itemrestrictions.item-restrictions-common.restrictions.excluded_restrictions": "Исключенные ограничения"
 }

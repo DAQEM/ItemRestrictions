@@ -1,0 +1,48 @@
+package com.daqem.itemrestrictions.client.translator;
+
+import com.daqem.itemrestrictions.ItemRestrictions;
+import com.daqem.yamlconfig.YamlConfigExpectPlatform;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+
+public class ConfigTranslator {
+    private static final Gson GSON = new Gson();
+
+    public static void load(List<String> languages, Map<String, String> translations) {
+        Path configDir = YamlConfigExpectPlatform.getConfigDirectory().resolve(ItemRestrictions.MOD_ID).resolve("lang");
+        if (!Files.exists(configDir)) {
+            try {
+                Files.createDirectories(configDir);
+            } catch (IOException e) {
+                ItemRestrictions.LOGGER.error("Failed to create item restrictions lang config directory", e);
+                return;
+            }
+        }
+
+        for (String lang : languages) {
+            Path langFile = configDir.resolve(lang + ".json");
+            if (Files.exists(langFile)) {
+                try (Reader reader = Files.newBufferedReader(langFile)) {
+                    JsonObject json = GSON.fromJson(reader, JsonObject.class);
+                    if (json != null) {
+                        for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+                            if (entry.getValue().isJsonPrimitive()) {
+                                translations.put(entry.getKey(), entry.getValue().getAsString());
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    ItemRestrictions.LOGGER.error("Failed to load translation file: {}", langFile, e);
+                }
+            }
+        }
+    }
+}

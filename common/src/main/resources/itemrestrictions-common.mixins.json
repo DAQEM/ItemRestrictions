@@ -4,11 +4,12 @@
   "package": "com.daqem.itemrestrictions.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "client.ClientLanguageMixin",
     "client.MixinScreen"
   ],
   "mixins": [
-    "MixinPlayerList",
     "MixinPlayer",
+    "MixinPlayerList",
     "block.MixinAbstractFurnaceBlockEntity",
     "block.MixinBaseContainerBlockEntity",
     "block.MixinBrewingStandBlockEntity",

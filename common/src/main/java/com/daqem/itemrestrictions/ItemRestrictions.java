@@ -53,8 +53,4 @@ public class ItemRestrictions {
     public static MutableComponent literal(String str) {
         return Component.literal(str);
     }
-
-    public static boolean isDebugEnvironment() {
-        return ItemRestrictionsConfig.isDebug.get();
-    }
 }
