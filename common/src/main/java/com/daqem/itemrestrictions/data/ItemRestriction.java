@@ -1,5 +1,9 @@
 package com.daqem.itemrestrictions.data;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.daqem.arc.api.action.data.IActionDataType;
 import com.daqem.arc.api.condition.ICondition;
 import com.daqem.arc.api.condition.IConditionSerializer;
@@ -8,15 +12,12 @@ import com.daqem.arc.data.serializer.ArcSerializer;
 import com.daqem.arc.registry.ArcRegistry;
 import com.daqem.itemrestrictions.ItemRestrictions;
 import com.google.gson.*;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ItemRestriction {
 
@@ -24,12 +25,14 @@ public class ItemRestriction {
     private final ItemStack icon;
     private final List<RestrictionType> restrictionTypes;
     private final List<ICondition> conditions;
+    private final boolean clientSide;
 
-    public ItemRestriction(ResourceLocation location, ItemStack icon, List<RestrictionType> restrictionTypes, List<ICondition> conditions) {
+    public ItemRestriction(ResourceLocation location, ItemStack icon, List<RestrictionType> restrictionTypes, List<ICondition> conditions, boolean clientSide) {
         this.location = location;
         this.icon = icon;
         this.restrictionTypes = restrictionTypes;
         this.conditions = conditions;
+        this.clientSide = clientSide;
     }
 
     public RestrictionResult isRestricted(ActionData actionData) {
@@ -60,6 +63,7 @@ public class ItemRestriction {
             ResourceLocation location = getResourceLocation(jsonObject, "location");
             JsonArray restrictionTypesArray = GsonHelper.getAsJsonArray(jsonObject, "types");
             JsonArray conditionsArray = GsonHelper.getAsJsonArray(jsonObject, "conditions");
+            boolean clientSide = GsonHelper.getAsBoolean(jsonObject, "client_side", true);
 
             List<RestrictionType> restrictionTypes = new ArrayList<>();
             List<ICondition> conditions = new ArrayList<>();
@@ -82,7 +86,7 @@ public class ItemRestriction {
                 });
             });
 
-            return new ItemRestriction(location, iconStack, restrictionTypes, conditions);
+            return new ItemRestriction(location, iconStack, restrictionTypes, conditions, clientSide);
         }
 
         public static void toNetwork(RegistryFriendlyByteBuf buf, ItemRestriction itemRestriction) {
@@ -90,6 +94,7 @@ public class ItemRestriction {
             ItemStack.STREAM_CODEC.encode(buf, itemRestriction.icon);
             buf.writeCollection(itemRestriction.restrictionTypes, (byteBuf, restrictionType) -> byteBuf.writeUtf(restrictionType.name()));
             buf.writeCollection(itemRestriction.conditions, (byteBuf, condition) -> IConditionSerializer.toNetwork(condition, (RegistryFriendlyByteBuf) byteBuf, itemRestriction.getLocation()));
+            buf.writeBoolean(itemRestriction.clientSide);
         }
 
         public static ItemRestriction fromNetwork(RegistryFriendlyByteBuf buf) {
@@ -106,7 +111,8 @@ public class ItemRestriction {
                 }
             });
             List<ICondition> conditions = buf.readList(object -> IConditionSerializer.fromNetwork((RegistryFriendlyByteBuf) object));
-            return new ItemRestriction(location, icon, restrictionTypes, conditions);
+            boolean clientSide = buf.readBoolean();
+            return new ItemRestriction(location, icon, restrictionTypes, conditions, clientSide);
         }
     }
 
@@ -128,5 +134,9 @@ public class ItemRestriction {
     @SuppressWarnings("unused")
     public List<RestrictionType> getRestrictionTypes() {
         return restrictionTypes;
+    }
+
+    public boolean isClientSide() {
+        return clientSide;
     }
 }
