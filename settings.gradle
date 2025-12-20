@@ -21,4 +21,4 @@ include("testmod-common")
 include("testmod-fabric")
 include("testmod-neoforge")
 
-rootProject.name = "Item Restrictions 1.21.9"
+rootProject.name = "Item Restrictions 1.21.11"

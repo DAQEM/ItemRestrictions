@@ -15,19 +15,19 @@ import com.google.gson.*;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 
 public class ItemRestriction {
 
-    private final ResourceLocation location;
+    private final Identifier location;
     private final ItemStack icon;
     private final List<RestrictionType> restrictionTypes;
     private final List<ICondition> conditions;
     private final boolean clientSide;
 
-    public ItemRestriction(ResourceLocation location, ItemStack icon, List<RestrictionType> restrictionTypes, List<ICondition> conditions, boolean clientSide) {
+    public ItemRestriction(Identifier location, ItemStack icon, List<RestrictionType> restrictionTypes, List<ICondition> conditions, boolean clientSide) {
         this.location = location;
         this.icon = icon;
         this.restrictionTypes = restrictionTypes;
@@ -60,7 +60,7 @@ public class ItemRestriction {
         @Override
         public ItemRestriction deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject jsonObject = json.getAsJsonObject();
-            ResourceLocation location = getResourceLocation(jsonObject, "location");
+            Identifier location = getIdentifier(jsonObject, "location");
             JsonArray restrictionTypesArray = GsonHelper.getAsJsonArray(jsonObject, "types");
             JsonArray conditionsArray = GsonHelper.getAsJsonArray(jsonObject, "conditions");
             boolean clientSide = GsonHelper.getAsBoolean(jsonObject, "client_side", true);
@@ -80,9 +80,9 @@ public class ItemRestriction {
             });
 
             conditionsArray.forEach(jsonElement -> {
-                ResourceLocation conditionTypeLocation = ResourceLocation.parse(GsonHelper.getAsString(jsonElement.getAsJsonObject(), "type"));
+                Identifier conditionTypeLocation = Identifier.parse(GsonHelper.getAsString(jsonElement.getAsJsonObject(), "type"));
                 ArcRegistry.CONDITION.getOptional(conditionTypeLocation).ifPresent(conditionType -> {
-                    conditions.add(conditionType.getSerializer().fromJson(ResourceLocation.parse(""), jsonElement.getAsJsonObject()));
+                    conditions.add(conditionType.getSerializer().fromJson(Identifier.parse(""), jsonElement.getAsJsonObject()));
                 });
             });
 
@@ -90,15 +90,15 @@ public class ItemRestriction {
         }
 
         public static void toNetwork(RegistryFriendlyByteBuf buf, ItemRestriction itemRestriction) {
-            buf.writeResourceLocation(itemRestriction.location);
+            buf.writeIdentifier(itemRestriction.location);
             ItemStack.STREAM_CODEC.encode(buf, itemRestriction.icon);
             buf.writeCollection(itemRestriction.restrictionTypes, (byteBuf, restrictionType) -> byteBuf.writeUtf(restrictionType.name()));
-            buf.writeCollection(itemRestriction.conditions, (byteBuf, condition) -> IConditionSerializer.toNetwork(condition, (RegistryFriendlyByteBuf) byteBuf, itemRestriction.getLocation()));
+            buf.writeCollection(itemRestriction.conditions, (byteBuf, condition) -> IConditionSerializer.toNetwork(condition, (RegistryFriendlyByteBuf) byteBuf, itemRestriction.getIdentifier()));
             buf.writeBoolean(itemRestriction.clientSide);
         }
 
         public static ItemRestriction fromNetwork(RegistryFriendlyByteBuf buf) {
-            ResourceLocation location = buf.readResourceLocation();
+            Identifier location = buf.readIdentifier();
             ItemStack icon = ItemStack.STREAM_CODEC.decode(buf);
             List<String> restrictionTypeStrings = buf.readList(FriendlyByteBuf::readUtf);
             List<RestrictionType> restrictionTypes = new ArrayList<>();
@@ -117,7 +117,7 @@ public class ItemRestriction {
     }
 
     @SuppressWarnings("unused")
-    public ResourceLocation getLocation() {
+    public Identifier getIdentifier() {
         return location;
     }
 

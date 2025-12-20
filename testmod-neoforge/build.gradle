@@ -38,4 +38,5 @@ dependencies {
     modImplementation "com.daqem.uilib:uilib-neoforge:${project.ui_library_version}"
     modImplementation "com.daqem.yamlconfig:yamlconfig-neoforge:${project.config_library_version}"
     modImplementation "com.daqem.arc:arc-neoforge:${project.arc_version}"
+    modImplementation "dev.architectury:architectury-neoforge:${project.architectury_version}"
 }

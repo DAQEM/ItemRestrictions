@@ -5,7 +5,7 @@ import com.daqem.itemrestrictions.config.ItemRestrictionsConfig;
 import com.daqem.yamlconfig.YamlConfigExpectPlatform;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -29,7 +29,7 @@ public class ItemRestrictionManager extends SimplePreparableReloadListener<List<
             .registerTypeHierarchyAdapter(ItemRestriction.class, new ItemRestriction.Serializer())
             .create();
 
-    private ImmutableMap<ResourceLocation, ItemRestriction> itemRestrictions = ImmutableMap.of();
+    private ImmutableMap<Identifier, ItemRestriction> itemRestrictions = ImmutableMap.of();
 
     private static ItemRestrictionManager instance;
 
@@ -39,19 +39,19 @@ public class ItemRestrictionManager extends SimplePreparableReloadListener<List<
 
     @Override
     protected @NotNull List<ItemRestriction> prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
-        Map<ResourceLocation, Resource> resourceMap = resourceManager.listResources("itemrestrictions/restrictions", (resourceLocation) ->
+        Map<Identifier, Resource> resourceMap = resourceManager.listResources("itemrestrictions/restrictions", (resourceLocation) ->
                         resourceLocation.getPath().endsWith(".json")).entrySet().stream()
                 .collect(Collectors.toMap(entry ->
-                                ResourceLocation.fromNamespaceAndPath(
+                                Identifier.fromNamespaceAndPath(
                                         entry.getKey().getNamespace(),
                                         entry.getKey().getPath()
                                                 .substring(0, entry.getKey().getPath().length() - ".json".length())
                                                 .substring("itemrestrictions/restrictions/".length())),
                         Map.Entry::getValue));
 
-        Map<ResourceLocation, JsonObject> map = new HashMap<>();
-        for (Map.Entry<ResourceLocation, Resource> entry : resourceMap.entrySet()) {
-            ResourceLocation location = entry.getKey();
+        Map<Identifier, JsonObject> map = new HashMap<>();
+        for (Map.Entry<Identifier, Resource> entry : resourceMap.entrySet()) {
+            Identifier location = entry.getKey();
             try {
                 JsonObject jsonElement = GsonHelper.parse(entry.getValue().openAsReader());
                 map.put(location, jsonElement);
@@ -84,7 +84,7 @@ public class ItemRestrictionManager extends SimplePreparableReloadListener<List<
                                     namespace = ItemRestrictions.MOD_ID;
                                     resourcePath = relativePath;
                                 }
-                                ResourceLocation location = ResourceLocation.fromNamespaceAndPath(namespace, resourcePath);
+                                Identifier location = Identifier.fromNamespaceAndPath(namespace, resourcePath);
                                 map.put(location, jsonElement);
                             } catch (Exception e) {
                                 ItemRestrictions.LOGGER.error("Parsing error loading restriction from config {}", path, e);
@@ -98,8 +98,8 @@ public class ItemRestrictionManager extends SimplePreparableReloadListener<List<
         List<String> excludedRestrictions = ItemRestrictionsConfig.excludedRestrictions.get();
 
 
-        for (Map.Entry<ResourceLocation, JsonObject> entry : map.entrySet()) {
-            ResourceLocation location = entry.getKey();
+        for (Map.Entry<Identifier, JsonObject> entry : map.entrySet()) {
+            Identifier location = entry.getKey();
             if (excludedRestrictions.contains(location.toString())) {
                 continue;
             }
@@ -122,7 +122,7 @@ public class ItemRestrictionManager extends SimplePreparableReloadListener<List<
         ItemRestrictions.LOGGER.info("Loaded {} item restrictions", object.size());
         this.itemRestrictions = object.stream()
                 .collect(ImmutableMap.toImmutableMap(
-                        ItemRestriction::getLocation,
+                        ItemRestriction::getIdentifier,
                         itemRestriction -> itemRestriction
                 ));
     }
@@ -135,14 +135,14 @@ public class ItemRestrictionManager extends SimplePreparableReloadListener<List<
         return itemRestrictions.values().asList();
     }
 
-    public ItemRestriction getItemRestriction(ResourceLocation location) {
+    public ItemRestriction getItemRestriction(Identifier location) {
         return itemRestrictions.get(location);
     }
 
     public void setItemRestrictions(List<ItemRestriction> itemRestrictions) {
         this.itemRestrictions = itemRestrictions.stream()
                 .collect(ImmutableMap.toImmutableMap(
-                        ItemRestriction::getLocation,
+                        ItemRestriction::getIdentifier,
                         itemRestriction -> itemRestriction
                 ));
     }
