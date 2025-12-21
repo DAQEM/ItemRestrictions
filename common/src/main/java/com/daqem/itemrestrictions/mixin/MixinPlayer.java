@@ -3,7 +3,6 @@ package com.daqem.itemrestrictions.mixin;
 import java.util.List;
 import java.util.Optional;
 
-import net.minecraft.client.player.LocalPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 
 import com.daqem.arc.data.ActionData;
@@ -22,7 +21,7 @@ public abstract class MixinPlayer implements ItemRestrictionsPlayer {
         List<ItemRestriction> itemRestrictions = ItemRestrictionManager.getInstance().getItemRestrictions();
         Optional<RestrictionResult> optionalRestrictionResult = itemRestrictions.stream()
                 .filter(itemRestriction -> {
-                    if ((Object) this instanceof LocalPlayer) {
+                    if (((Player) (Object) this).level().isClientSide()) {
                         return itemRestriction.isClientSide();
                     }
                     return true;
