@@ -39,12 +39,11 @@ jobs:
         run: |
           echo "::set-output name=VERSION_NAME::$(./gradlew -q :common:printVersionName)"
 
-      - name: Check if tag exists 
-        uses: mukunku/tag-exists-action@v1.4.0
+      - name: Check if tag exists
+        uses: mukunku/tag-exists-action@v1.5.0
         id: checkTag
-        with: 
+        with:
           tag: ${{ steps.gradle_version.outputs.VERSION_NAME }}
-          repo: 'actions/checkout'
 
       - name: Fail if tag exists
         if: steps.checkTag.outputs.exists == 'true'
@@ -53,11 +52,8 @@ jobs:
       - name: Publish to DAQEM Maven
         run: ./gradlew publish
 
-      - name: Publish to Modrinth
-        run: ./gradlew modrinth
-
-      - name: Publish to CurseForge
-        run: ./gradlew curseforge
+      - name: Publish to CurseForge and Modrinth
+        run: ./gradlew publishUnified
 
       - name: Publish to GitHub Releases
         uses: ncipollo/release-action@v1

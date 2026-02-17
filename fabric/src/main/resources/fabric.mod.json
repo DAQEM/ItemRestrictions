@@ -23,10 +23,10 @@
     "itemrestrictions-common.mixins.json"
   ],
   "depends": {
-    "fabric": "*",
+    "fabric": ">=${fabric_api_version}",
     "minecraft": ">=${minecraft_version}",
     "architectury": ">=${architectury_version}",
-    "yamlconfig": ">=${config_library_version}",
+    "yamlconfig": ">=${yamlconfig_version}",
     "arc": ">=${arc_version}"
   }
 }
