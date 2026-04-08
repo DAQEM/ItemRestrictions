@@ -2,7 +2,7 @@ package com.daqem.itemrestrictions.data;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
 import com.daqem.itemrestrictions.config.ItemRestrictionsConfig;
-import com.daqem.yamlconfig.YamlConfigExpectPlatform;
+import com.daqem.knot.api.platform.Platform;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
 import net.minecraft.resources.Identifier;
@@ -38,7 +38,7 @@ public class ItemRestrictionManager extends SimplePreparableReloadListener<List<
     }
 
     @Override
-    protected @NotNull List<ItemRestriction> prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+    protected @NotNull List<ItemRestriction> prepare(ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
         Map<Identifier, Resource> resourceMap = resourceManager.listResources("itemrestrictions/restrictions", (resourceLocation) ->
                         resourceLocation.getPath().endsWith(".json")).entrySet().stream()
                 .collect(Collectors.toMap(entry ->
@@ -57,12 +57,12 @@ public class ItemRestrictionManager extends SimplePreparableReloadListener<List<
                 map.put(location, jsonElement);
             }
             catch (Exception runtimeException) {
-                ItemRestrictions.LOGGER.error("Parsing error loading item restriction {}", location, runtimeException);
+                ItemRestrictions.API.LOGGER.error("Parsing error loading item restriction {}", location, runtimeException);
             }
         }
 
         try {
-            Path configDir = YamlConfigExpectPlatform.getConfigDirectory().resolve(ItemRestrictions.MOD_ID).resolve("restrictions");
+            Path configDir = Platform.INFO.getConfigFolder().resolve(ItemRestrictions.MOD_ID).resolve("restrictions");
             if (!Files.exists(configDir)) {
                 Files.createDirectories(configDir);
             }
@@ -87,12 +87,12 @@ public class ItemRestrictionManager extends SimplePreparableReloadListener<List<
                                 Identifier location = Identifier.fromNamespaceAndPath(namespace, resourcePath);
                                 map.put(location, jsonElement);
                             } catch (Exception e) {
-                                ItemRestrictions.LOGGER.error("Parsing error loading restriction from config {}", path, e);
+                                ItemRestrictions.API.LOGGER.error("Parsing error loading restriction from config {}", path, e);
                             }
                         });
             }
         } catch (Exception e) {
-            ItemRestrictions.LOGGER.error("Error loading restrictions from config", e);
+            ItemRestrictions.API.LOGGER.error("Error loading restrictions from config", e);
         }
         List<ItemRestriction> itemRestrictions = new ArrayList<>();
         List<String> excludedRestrictions = ItemRestrictionsConfig.excludedRestrictions.get();
@@ -110,7 +110,7 @@ public class ItemRestrictionManager extends SimplePreparableReloadListener<List<
                 itemRestrictions.add(itemRestriction);
             }
             catch (JsonParseException | IllegalArgumentException runtimeException) {
-                ItemRestrictions.LOGGER.error("Parsing error loading item restriction {}", location, runtimeException);
+                ItemRestrictions.API.LOGGER.error("Parsing error loading item restriction {}", location, runtimeException);
             }
         }
 
@@ -118,8 +118,8 @@ public class ItemRestrictionManager extends SimplePreparableReloadListener<List<
     }
 
     @Override
-    protected void apply(List<ItemRestriction> object, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
-        ItemRestrictions.LOGGER.info("Loaded {} item restrictions", object.size());
+    protected void apply(List<ItemRestriction> object, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profilerFiller) {
+        ItemRestrictions.API.LOGGER.info("Loaded {} item restrictions", object.size());
         this.itemRestrictions = object.stream()
                 .collect(ImmutableMap.toImmutableMap(
                         ItemRestriction::getIdentifier,

@@ -7,7 +7,7 @@ import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsPlayer;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
-import dev.architectury.networking.NetworkManager;
+import com.daqem.knot.Knot;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.*;
@@ -40,7 +40,7 @@ public abstract class MixinAnvilMenu extends ItemCombinerMenu {
                                 .build());
                         if (restrictionResult.isRestricted(RestrictionType.REPAIR)) {
                             this.resultSlots.setItem(0, ItemStack.EMPTY);
-                            NetworkManager.sendToPlayer(serverPlayer, new ClientboundRestrictionPacket(RestrictionType.REPAIR));
+                            Knot.NETWORKING.sendToPlayer(serverPlayer, new ClientboundRestrictionPacket(RestrictionType.REPAIR));
                             ci.cancel();
                         }
                     }

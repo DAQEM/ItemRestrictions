@@ -1,7 +1,7 @@
 package com.daqem.itemrestrictions.client.translator;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
-import com.daqem.yamlconfig.YamlConfigExpectPlatform;
+import com.daqem.knot.api.platform.Platform;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -17,12 +17,12 @@ public class ConfigTranslator {
     private static final Gson GSON = new Gson();
 
     public static void load(List<String> languages, Map<String, String> translations) {
-        Path configDir = YamlConfigExpectPlatform.getConfigDirectory().resolve(ItemRestrictions.MOD_ID).resolve("lang");
+        Path configDir = Platform.INFO.getConfigFolder().resolve(ItemRestrictions.MOD_ID).resolve("lang");
         if (!Files.exists(configDir)) {
             try {
                 Files.createDirectories(configDir);
             } catch (IOException e) {
-                ItemRestrictions.LOGGER.error("Failed to create item restrictions lang config directory", e);
+                ItemRestrictions.API.LOGGER.error("Failed to create item restrictions lang config directory", e);
                 return;
             }
         }
@@ -40,7 +40,7 @@ public class ConfigTranslator {
                         }
                     }
                 } catch (Exception e) {
-                    ItemRestrictions.LOGGER.error("Failed to load translation file: {}", langFile, e);
+                    ItemRestrictions.API.LOGGER.error("Failed to load translation file: {}", langFile, e);
                 }
             }
         }

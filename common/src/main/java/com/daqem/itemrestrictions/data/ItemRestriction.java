@@ -13,23 +13,30 @@ import com.daqem.arc.registry.ArcRegistry;
 import com.daqem.itemrestrictions.ItemRestrictions;
 import com.google.gson.*;
 
+import com.mojang.brigadier.RedirectModifier;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
+import org.jetbrains.annotations.Nullable;
 
 public class ItemRestriction {
 
     private final Identifier location;
-    private final ItemStack icon;
+    @Nullable
+    private final ItemStackTemplate iconTemplate;
+    private ItemStack cachedIcon;
     private final List<RestrictionType> restrictionTypes;
     private final List<ICondition> conditions;
     private final boolean clientSide;
 
-    public ItemRestriction(Identifier location, ItemStack icon, List<RestrictionType> restrictionTypes, List<ICondition> conditions, boolean clientSide) {
+    public ItemRestriction(Identifier location, @Nullable ItemStackTemplate iconTemplate, List<RestrictionType> restrictionTypes, List<ICondition> conditions, boolean clientSide) {
         this.location = location;
-        this.icon = icon;
+        this.iconTemplate = iconTemplate;
+        this.cachedIcon = null;
         this.restrictionTypes = restrictionTypes;
         this.conditions = conditions;
         this.clientSide = clientSide;
@@ -57,6 +64,11 @@ public class ItemRestriction {
 
     public static class Serializer implements JsonDeserializer<ItemRestriction>, ArcSerializer {
 
+        public static final StreamCodec<RegistryFriendlyByteBuf, ItemRestriction> STREAM_CODEC = StreamCodec.of(
+                Serializer::toNetwork,
+                Serializer::fromNetwork
+        );
+
         @Override
         public ItemRestriction deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject jsonObject = json.getAsJsonObject();
@@ -67,7 +79,7 @@ public class ItemRestriction {
 
             List<RestrictionType> restrictionTypes = new ArrayList<>();
             List<ICondition> conditions = new ArrayList<>();
-            ItemStack iconStack = getItemStack(jsonObject, "icon", ItemStack.EMPTY);
+            ItemStackTemplate iconStackTemplate = getItemStackTemplate(jsonObject, "icon", null);
 
             restrictionTypesArray.forEach(jsonElement -> {
                 String restrictionTypeString = jsonElement.getAsString();
@@ -75,7 +87,7 @@ public class ItemRestriction {
                     RestrictionType restrictionType = RestrictionType.valueOf(restrictionTypeString.toUpperCase());
                     restrictionTypes.add(restrictionType);
                 } catch (IllegalArgumentException e) {
-                    ItemRestrictions.LOGGER.error("Could not deserialize restriction type {} because: {}", restrictionTypeString, e.getMessage());
+                    ItemRestrictions.API.LOGGER.error("Could not deserialize restriction type {} because: {}", restrictionTypeString, e.getMessage());
                 }
             });
 
@@ -86,12 +98,15 @@ public class ItemRestriction {
                 });
             });
 
-            return new ItemRestriction(location, iconStack, restrictionTypes, conditions, clientSide);
+            return new ItemRestriction(location, iconStackTemplate, restrictionTypes, conditions, clientSide);
         }
 
         public static void toNetwork(RegistryFriendlyByteBuf buf, ItemRestriction itemRestriction) {
             buf.writeIdentifier(itemRestriction.location);
-            ItemStack.STREAM_CODEC.encode(buf, itemRestriction.icon);
+            buf.writeBoolean(itemRestriction.iconTemplate != null);
+            if (itemRestriction.iconTemplate != null) {
+                ItemStackTemplate.STREAM_CODEC.encode(buf, itemRestriction.iconTemplate);
+            }
             buf.writeCollection(itemRestriction.restrictionTypes, (byteBuf, restrictionType) -> byteBuf.writeUtf(restrictionType.name()));
             buf.writeCollection(itemRestriction.conditions, (byteBuf, condition) -> IConditionSerializer.toNetwork(condition, (RegistryFriendlyByteBuf) byteBuf, itemRestriction.getIdentifier()));
             buf.writeBoolean(itemRestriction.clientSide);
@@ -99,7 +114,11 @@ public class ItemRestriction {
 
         public static ItemRestriction fromNetwork(RegistryFriendlyByteBuf buf) {
             Identifier location = buf.readIdentifier();
-            ItemStack icon = ItemStack.STREAM_CODEC.decode(buf);
+            boolean hasIcon = buf.readBoolean();
+            ItemStackTemplate icon = null;
+            if (hasIcon) {
+                icon = ItemStackTemplate.STREAM_CODEC.decode(buf);
+            }
             List<String> restrictionTypeStrings = buf.readList(FriendlyByteBuf::readUtf);
             List<RestrictionType> restrictionTypes = new ArrayList<>();
             restrictionTypeStrings.forEach(restrictionTypeString -> {
@@ -107,7 +126,7 @@ public class ItemRestriction {
                     RestrictionType restrictionType = RestrictionType.valueOf(restrictionTypeString.toUpperCase());
                     restrictionTypes.add(restrictionType);
                 } catch (IllegalArgumentException e) {
-                    ItemRestrictions.LOGGER.error("Could not deserialize restriction type {} because: {}", restrictionTypeString, e.getMessage());
+                    ItemRestrictions.API.LOGGER.error("Could not deserialize restriction type {} because: {}", restrictionTypeString, e.getMessage());
                 }
             });
             List<ICondition> conditions = buf.readList(object -> IConditionSerializer.fromNetwork((RegistryFriendlyByteBuf) object));
@@ -123,7 +142,19 @@ public class ItemRestriction {
 
     @SuppressWarnings("unused")
     public ItemStack getIcon() {
-        return icon;
+        if (iconTemplate == null) {
+            return ItemStack.EMPTY;
+        }
+        if (cachedIcon != null) {
+            return cachedIcon;
+        }
+        this.cachedIcon = iconTemplate.create();
+        return cachedIcon;
+    }
+
+    @SuppressWarnings("unused")
+    public @Nullable ItemStackTemplate getIconTemplate() {
+        return iconTemplate;
     }
 
     @SuppressWarnings("unused")

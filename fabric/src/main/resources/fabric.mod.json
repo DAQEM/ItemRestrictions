@@ -23,9 +23,9 @@
     "itemrestrictions-common.mixins.json"
   ],
   "depends": {
-    "fabric": ">=${fabric_api_version}",
+    "fabric-api": ">=${fabric_version}",
     "minecraft": ">=${minecraft_version}",
-    "architectury": ">=${architectury_version}",
+    "knot": ">=${knot_version}",
     "yamlconfig": ">=${yamlconfig_version}",
     "arc": ">=${arc_version}"
   }

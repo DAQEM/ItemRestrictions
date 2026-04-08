@@ -1,9 +1,8 @@
 package com.daqem.itemrestrictions.mixin;
 
-import com.daqem.itemrestrictions.ItemRestrictions;
 import com.daqem.itemrestrictions.data.ItemRestrictionManager;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundUpdateItemRestrictionsPacket;
-import dev.architectury.networking.NetworkManager;
+import com.daqem.knot.Knot;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -25,12 +24,12 @@ public abstract class MixinPlayerList {
     @Inject(at = @At("TAIL"), method = "reloadResources")
     private void reloadResources(CallbackInfo ci) {
         for (ServerPlayer player : this.players) {
-            NetworkManager.sendToPlayer(player, new ClientboundUpdateItemRestrictionsPacket(ItemRestrictionManager.getInstance().getItemRestrictions()));
+            Knot.NETWORKING.sendToPlayer(player, new ClientboundUpdateItemRestrictionsPacket(ItemRestrictionManager.getInstance().getItemRestrictions()));
         }
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;sendPlayerPermissionLevel(Lnet/minecraft/server/level/ServerPlayer;)V", shift = At.Shift.BEFORE), method = "placeNewPlayer")
     private void placeNewPlayer(Connection connection, ServerPlayer serverPlayer, CommonListenerCookie commonListenerCookie, CallbackInfo ci) {
-        NetworkManager.sendToPlayer(serverPlayer, new ClientboundUpdateItemRestrictionsPacket(ItemRestrictionManager.getInstance().getItemRestrictions()));
+        Knot.NETWORKING.sendToPlayer(serverPlayer, new ClientboundUpdateItemRestrictionsPacket(ItemRestrictionManager.getInstance().getItemRestrictions()));
     }
 }

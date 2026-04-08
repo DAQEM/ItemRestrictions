@@ -4,7 +4,7 @@ import com.daqem.itemrestrictions.ItemRestrictions;
 import com.daqem.itemrestrictions.client.screen.ItemRestrictionsScreen;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.screens.Screen;
@@ -32,8 +32,8 @@ public abstract class MixinScreen extends AbstractContainerEventHandler implemen
         this.itemrestrictions$restrictionType = restrictionType;
     }
 
-    @Inject(at = @At("HEAD"), method = "render")
-    private void render(GuiGraphics guiGraphics, int i, int j, float f, CallbackInfo ci) {
+    @Inject(at = @At("HEAD"), method = "extractRenderState")
+    private void itemrestrictions$extractRenderState(GuiGraphicsExtractor guiGraphics, int i, int j, float f, CallbackInfo ci) {
         if (itemrestrictions$restrictionType != null && itemrestrictions$restrictionType != RestrictionType.NONE) {
             renderCantCraftMessage(guiGraphics, getFont(), width, height, 166, itemrestrictions$restrictionType);
         }

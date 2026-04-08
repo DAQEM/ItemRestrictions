@@ -2,21 +2,25 @@ package com.daqem.itemrestrictions.event;
 
 import com.daqem.arc.api.action.data.ActionDataBuilder;
 import com.daqem.arc.api.action.data.IActionDataType;
-import com.daqem.arc.api.event.*;
 import com.daqem.arc.api.player.ArcPlayer;
 import com.daqem.arc.api.player.ArcServerPlayer;
 import com.daqem.itemrestrictions.ItemRestrictions;
 import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsPlayer;
+import com.daqem.knot.events.EventPriority;
+import com.daqem.knot.events.EventResult;
+import com.daqem.knot.events.common.block.BlockEvent;
+import com.daqem.knot.events.common.entity.EntityEvent;
+import com.daqem.knot.events.common.item.ItemEvent;
 import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
-public class ArcEvents {
+public class ItemRestrictionsEvents {
 
     public static void registerEvents() {
-        ArcBlockEvent.BREAK_BLOCK.register((serverLevel, blockPos, blockState, serverPlayer, supplier) -> {
+        BlockEvent.BREAK_BLOCK.register((serverLevel, blockPos, blockState, serverPlayer) -> {
             if (serverPlayer instanceof ItemRestrictionsPlayer itemRestrictionsPlayer && serverPlayer instanceof ArcServerPlayer arcServerPlayer) {
                 if (blockState != null) {
                     RestrictionResult result = itemRestrictionsPlayer.itemrestrictions$isRestricted(
@@ -29,7 +33,7 @@ public class ArcEvents {
                                     .build());
 
                     if (result.isRestricted(RestrictionType.BREAK_BLOCK)) {
-                        serverPlayer.sendSystemMessage(ItemRestrictions.translatable(RestrictionType.BREAK_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED), true);
+                        serverPlayer.sendSystemMessage(ItemRestrictions.API.translatable(RestrictionType.BREAK_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED), true);
                         return EventResult.INTERRUPT_FALSE;
                     }
                 }
@@ -46,14 +50,14 @@ public class ArcEvents {
                                 .build());
 
                 if (result.isRestricted(RestrictionType.ITEM_BREAK_BLOCK)) {
-                    serverPlayer.sendSystemMessage(ItemRestrictions.translatable(RestrictionType.ITEM_BREAK_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED), true);
+                    serverPlayer.sendSystemMessage(ItemRestrictions.API.translatable(RestrictionType.ITEM_BREAK_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED), true);
                     return EventResult.INTERRUPT_FALSE;
                 }
             }
             return EventResult.PASS;
         }, EventPriority.HIGHEST);
 
-        ArcBlockEvent.GET_DESTROY_SPEED.register((player, blockState, blockPos, itemStack, mutableFloat) -> {
+        BlockEvent.GET_DESTROY_SPEED.register((player, blockState, blockPos, itemStack, mutableFloat) -> {
             if (player instanceof ItemRestrictionsPlayer itemRestrictionsPlayer && player instanceof ArcPlayer arcPlayer) {
                 if (blockState != null) {
                     RestrictionResult result = itemRestrictionsPlayer.itemrestrictions$isRestricted(
@@ -67,7 +71,7 @@ public class ArcEvents {
 
                     if (result.isRestricted(RestrictionType.BREAK_BLOCK)) {
                         if (player instanceof ServerPlayer serverPlayer) {
-                            serverPlayer.sendSystemMessage(ItemRestrictions.translatable(RestrictionType.BREAK_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED), true);
+                            serverPlayer.sendSystemMessage(ItemRestrictions.API.translatable(RestrictionType.BREAK_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED), true);
                         }
                         mutableFloat.setValue(0.0F);
                         return EventResult.INTERRUPT_FALSE;
@@ -87,7 +91,7 @@ public class ArcEvents {
 
                 if (result.isRestricted(RestrictionType.ITEM_BREAK_BLOCK)) {
                     if (player instanceof ServerPlayer serverPlayer) {
-                        serverPlayer.sendSystemMessage(ItemRestrictions.translatable(RestrictionType.ITEM_BREAK_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED), true);
+                        serverPlayer.sendSystemMessage(ItemRestrictions.API.translatable(RestrictionType.ITEM_BREAK_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED), true);
                     }
                     mutableFloat.setValue(0.0F);
                     return EventResult.INTERRUPT_FALSE;
@@ -96,7 +100,7 @@ public class ArcEvents {
             return EventResult.PASS;
         });
 
-        ArcBlockEvent.PLACE_BLOCK.register((level, blockPos, blockState, entity) -> {
+        BlockEvent.PLACE_BLOCK.register((level, blockPos, blockState, entity) -> {
             if (entity instanceof ItemRestrictionsPlayer itemRestrictionsPlayer && entity instanceof ArcPlayer arcPlayer) {
                 if (blockState != null) {
                     RestrictionResult result = itemRestrictionsPlayer.itemrestrictions$isRestricted(
@@ -110,7 +114,7 @@ public class ArcEvents {
 
                     if (result.isRestricted(RestrictionType.PLACE_BLOCK)) {
                         if (entity instanceof ServerPlayer serverPlayer) {
-                            serverPlayer.sendSystemMessage(ItemRestrictions.translatable(RestrictionType.PLACE_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED), true);
+                            serverPlayer.sendSystemMessage(ItemRestrictions.API.translatable(RestrictionType.PLACE_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED), true);
                         }
                         return EventResult.INTERRUPT_FALSE;
                     }
@@ -119,7 +123,7 @@ public class ArcEvents {
             return EventResult.PASS;
         }, EventPriority.HIGHEST);
 
-        ArcEntityEvent.PLAYER_HURT_ENTITY.register((serverPlayer, livingEntity, damageSource, mutableFloat) -> {
+        EntityEvent.PLAYER_HURT_ENTITY.register((serverPlayer, livingEntity, damageSource, mutableFloat) -> {
             if (serverPlayer instanceof ItemRestrictionsPlayer itemRestrictionsPlayer && serverPlayer instanceof ArcServerPlayer arcServerPlayer) {
                 ItemStack usedItemStack = serverPlayer.getMainHandItem();
                 RestrictionResult result = itemRestrictionsPlayer.itemrestrictions$isRestricted(
@@ -133,14 +137,14 @@ public class ArcEvents {
                                 .build());
 
                 if (result.isRestricted(RestrictionType.HURT_ENTITY)) {
-                    serverPlayer.sendSystemMessage(ItemRestrictions.translatable(RestrictionType.HURT_ENTITY.getTranslationKey()).withStyle(ChatFormatting.RED), true);
+                    serverPlayer.sendSystemMessage(ItemRestrictions.API.translatable(RestrictionType.HURT_ENTITY.getTranslationKey()).withStyle(ChatFormatting.RED), true);
                     return EventResult.INTERRUPT_FALSE;
                 }
             }
             return EventResult.PASS;
         }, EventPriority.HIGHEST);
 
-        ArcItemEvent.USE_ITEM.register((level, player, interactionHand, itemStack) -> {
+        ItemEvent.USE_ITEM.register((level, player, interactionHand, itemStack) -> {
             if (player instanceof ItemRestrictionsPlayer itemRestrictionsPlayer && player instanceof ArcPlayer arcPlayer) {
                 RestrictionResult result = itemRestrictionsPlayer.itemrestrictions$isRestricted(
                         new ActionDataBuilder(arcPlayer, null)
@@ -153,7 +157,7 @@ public class ArcEvents {
 
                 if (result.isRestricted(RestrictionType.USE_ITEM)) {
                     if (player instanceof ServerPlayer serverPlayer) {
-                        serverPlayer.sendSystemMessage(ItemRestrictions.translatable(RestrictionType.USE_ITEM.getTranslationKey()).withStyle(ChatFormatting.RED), true);
+                        serverPlayer.sendSystemMessage(ItemRestrictions.API.translatable(RestrictionType.USE_ITEM.getTranslationKey()).withStyle(ChatFormatting.RED), true);
                     }
                     return EventResult.INTERRUPT_FALSE;
                 }
@@ -161,7 +165,7 @@ public class ArcEvents {
             return EventResult.PASS;
         }, EventPriority.HIGHEST);
 
-        ArcEntityEvent.INTERACT_WITH_ENTITY.register((player, entity, interactionHand) -> {
+        EntityEvent.INTERACT_WITH_ENTITY.register((player, entity, interactionHand) -> {
             if (player instanceof ItemRestrictionsPlayer itemRestrictionsPlayer && player instanceof ArcPlayer arcPlayer) {
                 ItemStack usedItemStack = player.getItemInHand(interactionHand);
                 RestrictionResult result = itemRestrictionsPlayer.itemrestrictions$isRestricted(
@@ -176,7 +180,7 @@ public class ArcEvents {
 
                 if (result.isRestricted(RestrictionType.INTERACT_ENTITY)) {
                     if (player instanceof ServerPlayer serverPlayer) {
-                        serverPlayer.sendSystemMessage(ItemRestrictions.translatable(RestrictionType.INTERACT_ENTITY.getTranslationKey()).withStyle(ChatFormatting.RED), true);
+                        serverPlayer.sendSystemMessage(ItemRestrictions.API.translatable(RestrictionType.INTERACT_ENTITY.getTranslationKey()).withStyle(ChatFormatting.RED), true);
                     }
                     return EventResult.INTERRUPT_FALSE;
                 }
@@ -184,7 +188,7 @@ public class ArcEvents {
             return EventResult.PASS;
         }, EventPriority.HIGHEST);
 
-        ArcBlockEvent.RIGHT_CLICK_BLOCK.register((itemStack, level, player, interactionHand, blockState, blockPos) -> {
+        BlockEvent.RIGHT_CLICK_BLOCK.register((itemStack, level, player, interactionHand, blockState, blockPos) -> {
             if (player instanceof ItemRestrictionsPlayer itemRestrictionsPlayer && player instanceof ArcPlayer arcPlayer) {
                 RestrictionResult result = itemRestrictionsPlayer.itemrestrictions$isRestricted(
                         new ActionDataBuilder(arcPlayer, null)
@@ -198,7 +202,7 @@ public class ArcEvents {
 
                 if (result.isRestricted(RestrictionType.INTERACT_BLOCK)) {
                     if (player instanceof ServerPlayer serverPlayer) {
-                        serverPlayer.sendSystemMessage(ItemRestrictions.translatable(RestrictionType.INTERACT_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED), true);
+                        serverPlayer.sendSystemMessage(ItemRestrictions.API.translatable(RestrictionType.INTERACT_BLOCK.getTranslationKey()).withStyle(ChatFormatting.RED), true);
                     }
                     return EventResult.INTERRUPT_FALSE;
                 }

@@ -9,7 +9,7 @@ import com.daqem.itemrestrictions.level.block.ItemRestrictionsBrewingStandBlockE
 import com.daqem.itemrestrictions.level.menu.ItemRestrictionsBrewingStandMenu;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsPlayer;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
-import dev.architectury.networking.NetworkManager;
+import com.daqem.knot.Knot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
@@ -140,7 +140,7 @@ public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEnt
     private static void itemrestrictions$sendPacketCantCraft(RestrictionType type, ItemRestrictionsBrewingStandBlockEntity block) {
         if (block.itemrestrictions$getPlayer().containerMenu instanceof ItemRestrictionsBrewingStandMenu menu) {
             if (menu.itemrestrictions$getBrewingStand().equals(block.itemrestrictions$getBrewingStandBlockEntity())) {
-                NetworkManager.sendToPlayer(block.itemrestrictions$getPlayer(), new ClientboundRestrictionPacket(type));
+                Knot.NETWORKING.sendToPlayer(block.itemrestrictions$getPlayer(), new ClientboundRestrictionPacket(type));
             }
         }
     }

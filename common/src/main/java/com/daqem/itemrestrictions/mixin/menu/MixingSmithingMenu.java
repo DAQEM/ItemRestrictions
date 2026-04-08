@@ -7,7 +7,7 @@ import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsPlayer;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
-import dev.architectury.networking.NetworkManager;
+import com.daqem.knot.Knot;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.*;
@@ -39,7 +39,7 @@ public abstract class MixingSmithingMenu extends ItemCombinerMenu {
                                 .build());
                         if (restrictionResult.isRestricted(RestrictionType.CRAFT)) {
                             this.resultSlots.setItem(0, ItemStack.EMPTY);
-                            NetworkManager.sendToPlayer(serverPlayer, new ClientboundRestrictionPacket(RestrictionType.CRAFT));
+                            Knot.NETWORKING.sendToPlayer(serverPlayer, new ClientboundRestrictionPacket(RestrictionType.CRAFT));
                             ci.cancel();
                         }
                     }

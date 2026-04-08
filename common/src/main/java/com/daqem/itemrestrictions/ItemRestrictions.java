@@ -3,26 +3,21 @@ package com.daqem.itemrestrictions;
 import com.daqem.arc.registry.ArcRegistry;
 import com.daqem.itemrestrictions.config.ItemRestrictionsConfig;
 import com.daqem.itemrestrictions.data.ItemRestrictionManager;
-import com.daqem.itemrestrictions.event.ArcEvents;
+import com.daqem.itemrestrictions.event.ItemRestrictionsEvents;
 import com.daqem.itemrestrictions.networking.ItemRestrictionsNetworking;
-import com.mojang.logging.LogUtils;
-import dev.architectury.registry.ReloadListenerRegistry;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.PackType;
-import org.slf4j.Logger;
+import com.daqem.knot.Knot;
 
 public class ItemRestrictions {
+
     public static final String MOD_ID = "itemrestrictions";
-    public static final Logger LOGGER = LogUtils.getLogger();
+    public static final Knot API = new Knot(MOD_ID);
 
     public static void init() {
         ItemRestrictionsConfig.init();
         registerEvents();
         initRegistry();
         initNetworking();
-        ReloadListenerRegistry.register(PackType.SERVER_DATA, new ItemRestrictionManager(), getId(MOD_ID));
+        Knot.RELOAD_REGISTRY.registerData(API.getId(MOD_ID), new ItemRestrictionManager());
     }
 
     private static void initNetworking() {
@@ -34,23 +29,7 @@ public class ItemRestrictions {
     }
 
     private static void registerEvents() {
-        ArcEvents.registerEvents();
+        ItemRestrictionsEvents.registerEvents();
     }
 
-    public static Identifier getId(String id) {
-        return Identifier.fromNamespaceAndPath(MOD_ID, id);
-    }
-
-    public static MutableComponent translatable(String str) {
-        return Component.translatable(MOD_ID + "." + str);
-    }
-
-    public static MutableComponent translatable(String str, Object... objects) {
-        return Component.translatable(MOD_ID + "." + str, objects);
-    }
-
-    @SuppressWarnings("unused")
-    public static MutableComponent literal(String str) {
-        return Component.literal(str);
-    }
 }

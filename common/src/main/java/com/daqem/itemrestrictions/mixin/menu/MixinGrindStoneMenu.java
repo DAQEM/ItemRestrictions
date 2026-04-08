@@ -7,7 +7,7 @@ import com.daqem.itemrestrictions.data.RestrictionResult;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import com.daqem.itemrestrictions.level.player.ItemRestrictionsPlayer;
 import com.daqem.itemrestrictions.networking.clientbound.ClientboundRestrictionPacket;
-import dev.architectury.networking.NetworkManager;
+import com.daqem.knot.Knot;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -52,7 +52,7 @@ public abstract class MixinGrindStoneMenu extends AbstractContainerMenu {
     private void slotsChanged(Container container, CallbackInfo ci) {
         if (this.itemrestrictions$player != null) {
             if (this.repairSlots.getItem(0).isEmpty() || this.repairSlots.getItem(1).isEmpty()) {
-                NetworkManager.sendToPlayer(this.itemrestrictions$player, new ClientboundRestrictionPacket(RestrictionType.NONE));
+                Knot.NETWORKING.sendToPlayer(this.itemrestrictions$player, new ClientboundRestrictionPacket(RestrictionType.NONE));
             }
         }
     }
@@ -73,7 +73,7 @@ public abstract class MixinGrindStoneMenu extends AbstractContainerMenu {
                                             .build());
                             if (result.isRestricted(RestrictionType.REPAIR)) {
                                 this.getSlot(2).set(ItemStack.EMPTY);
-                                NetworkManager.sendToPlayer(this.itemrestrictions$player, new ClientboundRestrictionPacket(RestrictionType.REPAIR));
+                                Knot.NETWORKING.sendToPlayer(this.itemrestrictions$player, new ClientboundRestrictionPacket(RestrictionType.REPAIR));
                             }
                         }
                     }

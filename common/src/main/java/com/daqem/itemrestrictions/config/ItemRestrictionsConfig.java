@@ -1,7 +1,7 @@
 package com.daqem.itemrestrictions.config;
 
 import com.daqem.itemrestrictions.ItemRestrictions;
-import com.daqem.yamlconfig.YamlConfigExpectPlatform;
+import com.daqem.knot.api.platform.Platform;
 import com.daqem.yamlconfig.api.config.ConfigExtension;
 import com.daqem.yamlconfig.api.config.ConfigType;
 import com.daqem.yamlconfig.api.config.IConfigBuilder;
@@ -20,7 +20,7 @@ public class ItemRestrictionsConfig {
                 "item-restrictions-common",
                 ConfigExtension.YAML,
                 ConfigType.COMMON,
-                YamlConfigExpectPlatform.getConfigDirectory().resolve(ItemRestrictions.MOD_ID)
+                Platform.INFO.getConfigFolder().resolve(ItemRestrictions.MOD_ID)
         );
 
         builder.push("restrictions");

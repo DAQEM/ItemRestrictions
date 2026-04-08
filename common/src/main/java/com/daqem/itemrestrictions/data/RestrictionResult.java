@@ -42,6 +42,6 @@ public class RestrictionResult {
 
     @SuppressWarnings("unused")
     public MutableComponent getMessage() {
-        return ItemRestrictions.translatable("inventory.restricted", this.restrictedBy.size());
+        return ItemRestrictions.API.translatable("inventory.restricted", this.restrictedBy.size());
     }
 }
