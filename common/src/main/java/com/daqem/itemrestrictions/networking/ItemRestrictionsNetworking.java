@@ -10,7 +10,7 @@ import com.daqem.knot.Knot;
 public interface ItemRestrictionsNetworking {
 
     static void init() {
-        Knot.NETWORKING.registerClientbound(ClientboundRestrictionPacket.TYPE, ClientboundRestrictionPacket.STREAM_CODEC, ClientboundRestrictionPacketHandler::handle);
-        Knot.NETWORKING.registerClientbound(ClientboundUpdateItemRestrictionsPacket.TYPE, ClientboundUpdateItemRestrictionsPacket.STREAM_CODEC, ClientboundUpdateItemRestrictionsPacketHandler::handle);
+        Knot.NETWORKING.registerClientbound(ClientboundRestrictionPacket.TYPE, ClientboundRestrictionPacket.STREAM_CODEC, () -> ClientboundRestrictionPacketHandler::handle);
+        Knot.NETWORKING.registerClientbound(ClientboundUpdateItemRestrictionsPacket.TYPE, ClientboundUpdateItemRestrictionsPacket.STREAM_CODEC, () -> ClientboundUpdateItemRestrictionsPacketHandler::handle);
     }
 }
