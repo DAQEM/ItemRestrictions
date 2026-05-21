@@ -18,7 +18,7 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${rootProject.jUnitVersion}"
 
     modImplementation "com.daqem.yamlconfig:yamlconfig-common:${project.yamlconfig_version}"
-    modImplementation "com.daqem.arc:arc-common:${project.yamlconfig_version}"
+    modImplementation "com.daqem.arc:arc-common:${project.arc_version}"
 }
 
 publishing {

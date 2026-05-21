@@ -40,7 +40,7 @@ dependencies {
 
     modRuntimeOnly "com.daqem.uilib:uilib-fabric:${project.uilib_version}"
     modImplementation "com.daqem.yamlconfig:yamlconfig-fabric:${project.yamlconfig_version}"
-    modImplementation "com.daqem.arc:arc-fabric:${project.yamlconfig_version}"
+    modImplementation "com.daqem.arc:arc-fabric:${project.arc_version}"
 }
 
 processResources {

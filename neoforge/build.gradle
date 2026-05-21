@@ -46,7 +46,7 @@ dependencies {
 
     modRuntimeOnly "com.daqem.uilib:uilib-neoforge:${project.uilib_version}"
     modImplementation "com.daqem.yamlconfig:yamlconfig-neoforge:${project.yamlconfig_version}"
-    modImplementation "com.daqem.arc:arc-neoforge:${project.yamlconfig_version}"
+    modImplementation "com.daqem.arc:arc-neoforge:${project.arc_version}"
 }
 
 processResources {
