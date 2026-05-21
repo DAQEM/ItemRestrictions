@@ -37,7 +37,7 @@ side = "BOTH"
 [[dependencies."${mod_id}"]]
 modId = "yamlconfig"
 type = "required"
-versionRange = "[${config_library_version},)"
+versionRange = "[${yamlconfig_version},)"
 ordering = "NONE"
 side = "BOTH"
 

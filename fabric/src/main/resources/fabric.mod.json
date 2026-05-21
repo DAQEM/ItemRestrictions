@@ -29,7 +29,7 @@
     "fabric": "*",
     "minecraft": ">=${minecraft_version}",
     "architectury": ">=${architectury_version}",
-    "yamlconfig": ">=${config_library_version}",
+    "yamlconfig": ">=${yamlconfig_version}",
     "arc": ">=${arc_version}"
   }
 }

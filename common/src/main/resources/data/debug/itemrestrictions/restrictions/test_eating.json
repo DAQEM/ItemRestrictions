@@ -1,0 +1,18 @@
+{
+  "icon": {
+    "id": "minecraft:cooked_beef",
+    "count": 1
+  },
+  "types": [
+    "use_item"
+  ],
+  "conditions": [
+    {
+      "type": "arc:item",
+      "item": {
+        "id": "minecraft:cooked_beef",
+        "count": 1
+      }
+    }
+  ]
+}
