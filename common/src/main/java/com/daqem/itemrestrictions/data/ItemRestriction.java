@@ -3,6 +3,7 @@ package com.daqem.itemrestrictions.data;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.daqem.arc.api.action.data.IActionDataType;
 import com.daqem.arc.api.condition.ICondition;
@@ -84,7 +85,7 @@ public class ItemRestriction {
             restrictionTypesArray.forEach(jsonElement -> {
                 String restrictionTypeString = jsonElement.getAsString();
                 try {
-                    RestrictionType restrictionType = RestrictionType.valueOf(restrictionTypeString.toUpperCase());
+                    RestrictionType restrictionType = RestrictionType.valueOf(restrictionTypeString.toUpperCase(Locale.ROOT));
                     restrictionTypes.add(restrictionType);
                 } catch (IllegalArgumentException e) {
                     ItemRestrictions.API.LOGGER.error("Could not deserialize restriction type {} because: {}", restrictionTypeString, e.getMessage());
@@ -123,7 +124,7 @@ public class ItemRestriction {
             List<RestrictionType> restrictionTypes = new ArrayList<>();
             restrictionTypeStrings.forEach(restrictionTypeString -> {
                 try {
-                    RestrictionType restrictionType = RestrictionType.valueOf(restrictionTypeString.toUpperCase());
+                    RestrictionType restrictionType = RestrictionType.valueOf(restrictionTypeString.toUpperCase(Locale.ROOT));
                     restrictionTypes.add(restrictionType);
                 } catch (IllegalArgumentException e) {
                     ItemRestrictions.API.LOGGER.error("Could not deserialize restriction type {} because: {}", restrictionTypeString, e.getMessage());
