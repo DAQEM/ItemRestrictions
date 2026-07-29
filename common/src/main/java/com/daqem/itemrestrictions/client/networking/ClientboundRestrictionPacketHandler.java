@@ -12,7 +12,7 @@ public class ClientboundRestrictionPacketHandler {
 
     public static void handle(@NotNull ClientboundRestrictionPacket packet, ClientboundContext clientboundContext) {
         if (clientboundContext.player() instanceof LocalPlayer) {
-            Screen currentScreen = Minecraft.getInstance().screen;
+            Screen currentScreen = Minecraft.getInstance().gui.screen();
             if (currentScreen instanceof ItemRestrictionsScreen itemRestrictionsScreen) {
                 itemRestrictionsScreen.itemrestrictions$cantCraft(packet.getRestrictionType());
             }

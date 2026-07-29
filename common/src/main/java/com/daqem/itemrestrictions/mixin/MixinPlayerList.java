@@ -29,7 +29,7 @@ public abstract class MixinPlayerList {
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/server/players/PlayerList;sendPlayerPermissionLevel(Lnet/minecraft/server/level/ServerPlayer;)V", shift = At.Shift.BEFORE), method = "placeNewPlayer")
-    private void placeNewPlayer(Connection connection, ServerPlayer serverPlayer, CommonListenerCookie commonListenerCookie, CallbackInfo ci) {
-        Knot.NETWORKING.sendToPlayer(serverPlayer, new ClientboundUpdateItemRestrictionsPacket(ItemRestrictionManager.getInstance().getItemRestrictions()));
+    private void placeNewPlayer(Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
+        Knot.NETWORKING.sendToPlayer(player, new ClientboundUpdateItemRestrictionsPacket(ItemRestrictionManager.getInstance().getItemRestrictions()));
     }
 }

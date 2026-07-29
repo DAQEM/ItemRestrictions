@@ -30,7 +30,7 @@ public abstract class MixinGrindStoneMenu extends AbstractContainerMenu {
 
     @Shadow
     @Final
-    Container repairSlots;
+    private Container repairSlots;
     @Shadow
     @Final
     private Container resultSlots;
@@ -42,7 +42,7 @@ public abstract class MixinGrindStoneMenu extends AbstractContainerMenu {
     }
 
     @Inject(at = @At("TAIL"), method = "<init>(ILnet/minecraft/world/entity/player/Inventory;Lnet/minecraft/world/inventory/ContainerLevelAccess;)V")
-    private void init(int i, Inventory inventory, ContainerLevelAccess containerLevelAccess, CallbackInfo ci) {
+    private void init(int containerId, Inventory inventory, ContainerLevelAccess access, CallbackInfo ci) {
         if (inventory.player instanceof ServerPlayer serverPlayer) {
             this.itemrestrictions$player = serverPlayer;
         }

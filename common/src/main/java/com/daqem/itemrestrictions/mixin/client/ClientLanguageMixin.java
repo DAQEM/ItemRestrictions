@@ -23,7 +23,7 @@ public class ClientLanguageMixin {
             ),
             locals = LocalCapture.CAPTURE_FAILHARD
     )
-    private static void jobsplus$loadFrom(ResourceManager resourceManager, List<String> list, boolean bl, CallbackInfoReturnable<ClientLanguage> cir, Map<String, String> map) {
-        ConfigTranslator.load(list, map);
+    private static void jobsplus$loadFrom(ResourceManager resourceManager, List<String> languageStack, boolean defaultRightToLeft, CallbackInfoReturnable<ClientLanguage> cir, Map<String, String> map) {
+        ConfigTranslator.load(languageStack, map);
     }
 }

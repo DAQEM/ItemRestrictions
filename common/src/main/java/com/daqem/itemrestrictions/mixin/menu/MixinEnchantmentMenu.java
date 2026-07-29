@@ -34,7 +34,7 @@ public abstract class MixinEnchantmentMenu extends AbstractContainerMenu {
     }
 
     @Inject(at = @At("HEAD"), method = "clickMenuButton(Lnet/minecraft/world/entity/player/Player;I)Z", cancellable = true)
-    private void clickMenuButton(Player player, int level, CallbackInfoReturnable<Boolean> cir) {
+    private void clickMenuButton(Player player, int buttonId, CallbackInfoReturnable<Boolean> cir) {
         if (player instanceof ServerPlayer serverPlayer) {
             if (serverPlayer instanceof ItemRestrictionsPlayer itemRestrictionsPlayer) {
                 if (serverPlayer instanceof ArcPlayer arcPlayer) {

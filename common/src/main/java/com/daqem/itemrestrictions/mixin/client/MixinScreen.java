@@ -1,6 +1,5 @@
 package com.daqem.itemrestrictions.mixin.client;
 
-import com.daqem.itemrestrictions.ItemRestrictions;
 import com.daqem.itemrestrictions.client.screen.ItemRestrictionsScreen;
 import com.daqem.itemrestrictions.data.RestrictionType;
 import net.minecraft.client.gui.Font;
@@ -33,9 +32,9 @@ public abstract class MixinScreen extends AbstractContainerEventHandler implemen
     }
 
     @Inject(at = @At("HEAD"), method = "extractRenderState")
-    private void itemrestrictions$extractRenderState(GuiGraphicsExtractor guiGraphics, int i, int j, float f, CallbackInfo ci) {
+    private void itemrestrictions$extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
         if (itemrestrictions$restrictionType != null && itemrestrictions$restrictionType != RestrictionType.NONE) {
-            renderCantCraftMessage(guiGraphics, getFont(), width, height, 166, itemrestrictions$restrictionType);
+            renderCantCraftMessage(graphics, getFont(), width, height, 166, itemrestrictions$restrictionType);
         }
     }
 }

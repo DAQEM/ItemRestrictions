@@ -56,7 +56,7 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
     protected NonNullList<ItemStack> items;
 
     @Shadow
-    int litTimeRemaining;
+    private int litTimeRemaining;
 
     protected MixinAbstractFurnaceBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
@@ -107,15 +107,18 @@ public abstract class MixinAbstractFurnaceBlockEntity extends BaseContainerBlock
 
                         if (block.itemrestrictions$getPlayer() instanceof ItemRestrictionsPlayer player) {
                             if (player instanceof ArcPlayer arcPlayer) {
-                                ItemStack resultStack = recipe.assemble(null);
-                                result = player.itemrestrictions$isRestricted(
-                                        new ActionDataBuilder(arcPlayer, null)
-                                                .withData(IActionDataType.ITEM_STACK, resultStack)
-                                                .withData(IActionDataType.ITEM, resultStack.getItem())
-                                                .withData(IActionDataType.WORLD, serverLevel)
-                                                .withData(IActionDataType.BLOCK_STATE, blockState)
-                                                .withData(IActionDataType.BLOCK_POSITION, blockPos)
-                                                .build());
+                                try {
+                                    ItemStack resultStack = recipe.assemble(null);
+                                    result = player.itemrestrictions$isRestricted(
+                                            new ActionDataBuilder(arcPlayer, null)
+                                                    .withData(IActionDataType.ITEM_STACK, resultStack)
+                                                    .withData(IActionDataType.ITEM, resultStack.getItem())
+                                                    .withData(IActionDataType.WORLD, serverLevel)
+                                                    .withData(IActionDataType.BLOCK_STATE, blockState)
+                                                    .withData(IActionDataType.BLOCK_POSITION, blockPos)
+                                                    .build());
+                                } catch (Exception ignored) {
+                                }
                             }
                         }
 

@@ -14,7 +14,7 @@ public abstract class MixinAbstractFurnaceMenu extends RecipeBookMenu implements
 
     @Shadow
     @Final
-    Container container;
+    private Container container;
 
     public MixinAbstractFurnaceMenu(MenuType<?> menuType, int i) {
         super(menuType, i);

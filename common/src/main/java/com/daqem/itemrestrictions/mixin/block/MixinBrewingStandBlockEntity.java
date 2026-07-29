@@ -38,7 +38,7 @@ import java.util.UUID;
 public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEntity implements WorldlyContainer, ItemRestrictionsBrewingStandBlockEntity {
 
     @Shadow
-    int brewTime;
+    private int brewTime;
     @Shadow
     private NonNullList<ItemStack> items;
     @Shadow
@@ -56,37 +56,37 @@ public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEnt
     }
 
     @Inject(at = @At("TAIL"), method = "saveAdditional")
-    private void saveAdditional(ValueOutput valueOutput, CallbackInfo ci) {
+    private void saveAdditional(ValueOutput output, CallbackInfo ci) {
         ServerPlayer serverPlayer = itemrestrictions$getPlayer();
         if (serverPlayer != null) {
-            valueOutput.putString("ItemRestrictionsServerPlayer", serverPlayer.getUUID().toString());
+            output.putString("ItemRestrictionsServerPlayer", serverPlayer.getUUID().toString());
         } else {
             UUID uuid = itemrestrictions$getPlayerUUID();
             if (uuid != null) {
-                valueOutput.putString("ItemRestrictionsServerPlayer", uuid.toString());
+                output.putString("ItemRestrictionsServerPlayer", uuid.toString());
             }
         }
     }
 
     @Inject(at = @At("TAIL"), method = "loadAdditional")
-    private void load(ValueInput valueInput, CallbackInfo ci) {
-        valueInput.getString("ItemRestrictionsServerPlayer").ifPresent(uuid ->
+    private void load(ValueInput input, CallbackInfo ci) {
+        input.getString("ItemRestrictionsServerPlayer").ifPresent(uuid ->
                 itemrestrictions$setPlayerUUID(UUID.fromString(uuid)));
     }
 
     @Inject(at = @At(value = "HEAD"), method = "serverTick(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/entity/BrewingStandBlockEntity;)V", cancellable = true)
-    private static void doBrew(Level level, BlockPos blockPos, BlockState blockState, BrewingStandBlockEntity brewingStandBlockEntity, CallbackInfo ci) {
-        if (brewingStandBlockEntity instanceof ItemRestrictionsBrewingStandBlockEntity block) {
+    private static void doBrew(Level level, BlockPos pos, BlockState selfState, BrewingStandBlockEntity entity, CallbackInfo ci) {
+        if (entity instanceof ItemRestrictionsBrewingStandBlockEntity block) {
             if (block.itemrestrictions$getPlayer() == null && block.itemrestrictions$getPlayerUUID() != null && level.getServer() != null) {
                 ServerPlayer player = level.getServer().getPlayerList().getPlayer(block.itemrestrictions$getPlayerUUID());
                 block.itemrestrictions$setPlayer(player);
 
             }
-            if (block.itemrestrictions$getPlayer() != null && !brewingStandBlockEntity.getItem(3).isEmpty()) {
-                if (!brewingStandBlockEntity.getItem(0).isEmpty() || !brewingStandBlockEntity.getItem(1).isEmpty() || !brewingStandBlockEntity.getItem(2).isEmpty()) {
-                    ItemStack ingredient = brewingStandBlockEntity.getItem(3);
+            if (block.itemrestrictions$getPlayer() != null && !entity.getItem(3).isEmpty()) {
+                if (!entity.getItem(0).isEmpty() || !entity.getItem(1).isEmpty() || !entity.getItem(2).isEmpty()) {
+                    ItemStack ingredient = entity.getItem(3);
                     for (int i = 0; i < 3; i++) {
-                        ItemStack potion = brewingStandBlockEntity.getItem(i);
+                        ItemStack potion = entity.getItem(i);
                         ItemStack mixedPotion = level.potionBrewing().mix(ingredient, potion);
 
                         RestrictionResult result = new RestrictionResult();
@@ -98,22 +98,22 @@ public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEnt
                                                 .withData(IActionDataType.ITEM_STACK, mixedPotion)
                                                 .withData(IActionDataType.ITEM, mixedPotion.getItem())
                                                 .withData(IActionDataType.WORLD, level)
-                                                .withData(IActionDataType.BLOCK_STATE, blockState)
-                                                .withData(IActionDataType.BLOCK_POSITION, blockPos)
+                                                .withData(IActionDataType.BLOCK_STATE, selfState)
+                                                .withData(IActionDataType.BLOCK_POSITION, pos)
                                                 .build());
                             }
                         }
 
                         if (result.isRestricted(RestrictionType.BREW)) {
                             block.itemrestrictions$setBrewTime(0);
-                            setChanged(level, blockPos, brewingStandBlockEntity.getBlockState());
+                            setChanged(level, pos, entity.getBlockState());
                             ci.cancel();
 
                             boolean[] bls = block.itemrestrictions$getPotionBits();
                             if (!Arrays.equals(bls, block.itemrestrictions$getLastPotionCount())) {
                                 block.itemrestrictions$setLastPotionCount(bls);
-                                BlockState blockState2 = blockState;
-                                if (!(blockState.getBlock() instanceof BrewingStandBlock)) {
+                                BlockState blockState2 = selfState;
+                                if (!(selfState.getBlock() instanceof BrewingStandBlock)) {
                                     return;
                                 }
 
@@ -121,16 +121,16 @@ public abstract class MixinBrewingStandBlockEntity extends BaseContainerBlockEnt
                                     blockState2 = blockState2.setValue(BrewingStandBlock.HAS_BOTTLE[j], bls[j]);
                                 }
 
-                                level.setBlock(blockPos, blockState2, 2);
+                                level.setBlock(pos, blockState2, 2);
                             }
                             itemrestrictions$sendPacketCantCraft(RestrictionType.BREW, block);
                             return;
                         }
                     }
-                } else if (brewingStandBlockEntity.getItem(0).isEmpty() && brewingStandBlockEntity.getItem(1).isEmpty() && brewingStandBlockEntity.getItem(2).isEmpty()) {
+                } else if (entity.getItem(0).isEmpty() && entity.getItem(1).isEmpty() && entity.getItem(2).isEmpty()) {
                     itemrestrictions$sendPacketCantCraft(RestrictionType.NONE, block);
                 }
-            } else if (block.itemrestrictions$getPlayer() != null && brewingStandBlockEntity.getItem(3).isEmpty()) {
+            } else if (block.itemrestrictions$getPlayer() != null && entity.getItem(3).isEmpty()) {
                 itemrestrictions$sendPacketCantCraft(RestrictionType.NONE, block);
             }
         }

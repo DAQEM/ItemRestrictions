@@ -28,18 +28,18 @@ public abstract class MixinCraftingMenu extends RecipeBookMenu {
     }
 
     @Inject(at = @At("TAIL"), method = "slotChangedCraftingGrid")
-    private static void slotChangedCraftingGrid(AbstractContainerMenu abstractContainerMenu, ServerLevel serverLevel, Player player, CraftingContainer craftingContainer, ResultContainer resultContainer, RecipeHolder<CraftingRecipe> recipeHolder, CallbackInfo ci) {
+    private static void slotChangedCraftingGrid(AbstractContainerMenu menu, ServerLevel level, Player player, CraftingContainer container, ResultContainer resultSlots, RecipeHolder<CraftingRecipe> recipeHint, CallbackInfo ci) {
         if (player instanceof ServerPlayer serverPlayer) {
             if (serverPlayer instanceof ItemRestrictionsPlayer itemRestrictionsPlayer) {
                 if (serverPlayer instanceof ArcPlayer arcPlayer) {
-                    ItemStack itemStack = resultContainer.getItem(0);
+                    ItemStack itemStack = resultSlots.getItem(0);
                     RestrictionResult restrictionResult = itemRestrictionsPlayer.itemrestrictions$isRestricted(new ActionDataBuilder(arcPlayer, null)
                             .withData(IActionDataType.ITEM_STACK, itemStack)
                             .withData(IActionDataType.ITEM, itemStack.getItem())
-                            .withData(IActionDataType.WORLD, serverLevel)
+                            .withData(IActionDataType.WORLD, level)
                             .build());
                     if (restrictionResult.isRestricted(RestrictionType.CRAFT)) {
-                        resultContainer.setItem(0, ItemStack.EMPTY);
+                        resultSlots.setItem(0, ItemStack.EMPTY);
                         Knot.NETWORKING.sendToPlayer(serverPlayer, new ClientboundRestrictionPacket(RestrictionType.CRAFT));
                     } else {
                         Knot.NETWORKING.sendToPlayer(serverPlayer, new ClientboundRestrictionPacket(RestrictionType.NONE));
